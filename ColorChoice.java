@@ -13,6 +13,7 @@ public class ColorChoice extends JFrame {
 
 	private JPanel contentPane;
 
+	JLabel statusbar = new JLabel("initial");
 	/**
 	 * Launch the application.
 	 */
@@ -61,6 +62,7 @@ public class ColorChoice extends JFrame {
 			
 		}
 		
+		add(statusbar);
 		
 		getContentPane().add(Box.createRigidArea(new Dimension(0,5)));
 		
@@ -74,8 +76,10 @@ public class ColorChoice extends JFrame {
 //		buttonPane.setLayout(new BoxLayout(buttonPane,BoxLayout.Y_AXIS));
 		
 //###################### BUTTONS#############################
+		ButtonListener listener = new ButtonListener();
 		//++++++++++++++++Submit Button++++++++++++
 		JButton submit = new JButton("GO");
+		submit.addActionListener(listener);
 		//submit.setBounds(10, 10, 10, 10);
 		//submit.setPreferredSize(new Dimension(10,40));
 		getContentPane().add(submit);
@@ -93,17 +97,37 @@ public class ColorChoice extends JFrame {
 		
 		//++++++++++++++++Reset Button++++++++++++NEED OTHER THAN ANYNOUMOUS FUNCTION
 		JButton reset = new JButton("reset");
-		close.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent event){
-				//TODO: button.setSate(false)
-			}
-		});
+		reset.addActionListener(listener);
 		add(reset);
 //		buttonPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 //		setContentPane(contentPane);
 		setSize(1000,1000);
 //		buttonPane.setVisible(true);
+	}
+	
+	
+//#########################BUTTON LISTENER#################################	
+	class ButtonListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			JButton o = (JButton) e.getSource();
+			String label = o.getText();
+			statusbar.setText(" " + label+" clicked");
+			
+			if(label.equals("Reset")){
+				//TODO: reset
+			}
+			
+			if(label.equals("GO")){
+				//TODO:Generate Divided Color Bars
+				JFrame bars = new Bars();
+				bars.setVisible(true);
+				
+			}
+			
+		}
+		
 	}
 
 }
