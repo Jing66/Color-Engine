@@ -83,8 +83,8 @@ public class ColorChoice extends JFrame {
 		//submit.setBounds(10, 10, 10, 10);
 		//submit.setPreferredSize(new Dimension(10,40));
 		getContentPane().add(submit);
-		JPanel panel = new JPanel();
-		getContentPane().add(panel);
+//		JPanel panel = new JPanel();
+//		getContentPane().add(panel);
 		
 		//++++++++++++++++Closing Button++++++++++++
 		JButton close = new JButton("close");
@@ -137,6 +137,7 @@ public class ColorChoice extends JFrame {
 		
 	}
 	
+	//NOTE: This can be in a separate class since it doesn't need to change fields in ColorChoice
 	class ChoiceListener implements ActionListener{
 		private ArrayList<String> choices;
 		
