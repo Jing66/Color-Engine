@@ -106,8 +106,15 @@ public class ColorChoice extends JFrame {
 	}
 	
 	
-//#########################BUTTON LISTENER#################################	
+//#########################BUTTON LISTENER CLASS#################################	
 	class ButtonListener implements ActionListener{
+		
+//		private String[] choices;
+//		
+//		public ButtonListener(String[] choices){
+//			this.choices = choices;
+//		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
@@ -125,6 +132,21 @@ public class ColorChoice extends JFrame {
 				bars.setVisible(true);
 				
 			}
+			
+		}
+		
+	}
+	
+	class ChoiceListener implements ActionListener{
+		private ArrayList<String> choices;
+		
+		public ChoiceListener(ArrayList<String> choices){
+			this.choices = choices;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Generate empty color bars
 			
 		}
 		
