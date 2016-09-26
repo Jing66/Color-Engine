@@ -3,16 +3,19 @@ package colors;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 
-public class ColorChoice extends JFrame implements ActionListener{
+public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 
 	private JPanel contentPane;
 	ArrayList<JCheckBox> choices ;
+	ArrayList<String> selected = new ArrayList<String>();
 	
 	JLabel statusbar = new JLabel("initial");
 	/**
@@ -26,6 +29,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 					//pack
 					frame.pack();
 					frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -50,7 +54,9 @@ public class ColorChoice extends JFrame implements ActionListener{
 		getContentPane().setLayout(test);
 		choices = new ArrayList<JCheckBox>();
 		for(String i: securities){
-			JCheckBox choice = new JCheckBox(i);
+			JCheckBox choice = new JCheckBox(i, false);
+			choice.setName(i);
+			choice.addItemListener(this);
 			choices.add(choice);
 			getContentPane().add(choice);
 			ButtonGroup buttonGroup = new ButtonGroup();
@@ -77,11 +83,10 @@ public class ColorChoice extends JFrame implements ActionListener{
 //		buttonPane.setLayout(new BoxLayout(buttonPane,BoxLayout.Y_AXIS));
 		
 //###################### BUTTONS#############################
-		ButtonListener listener = new ButtonListener();
-		ChoiceListener goListener = new ChoiceListener(choices);
+		
 		//++++++++++++++++Submit Button++++++++++++
 		JButton submit = new JButton("GO");
-		submit.addActionListener(goListener);
+		submit.addActionListener(this);
 		//submit.setBounds(10, 10, 10, 10);
 		//submit.setPreferredSize(new Dimension(10,40));
 		getContentPane().add(submit);
@@ -99,7 +104,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 		
 		//++++++++++++++++Reset Button++++++++++++NEED OTHER THAN ANYNOUMOUS FUNCTION
 		JButton reset = new JButton("reset");
-		reset.addActionListener(listener);
+		reset.addActionListener(this);
 		add(reset);
 //		buttonPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 //		setContentPane(contentPane);
@@ -109,61 +114,37 @@ public class ColorChoice extends JFrame implements ActionListener{
 	
 	
 //#########################BUTTON LISTENER CLASS#################################	
-	class ButtonListener implements ActionListener{
-		
-//		private String[] choices;
-//		
-//		public ButtonListener(String[] choices){
-//			this.choices = choices;
-//		}
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			JButton o = (JButton) e.getSource();
-			String label = o.getText();
-			statusbar.setText(" " + label+" clicked");
-			
-			if(label.equals("Reset")){
-				//TODO: reset
-			}
-			
-			if(label.equals("GO")){
-				//TODO:Generate Divided Color Bars
-				JFrame bars = new Bars();
-				bars.setVisible(true);
-				
-			}
-			
-		}
-		
-	}
 	
-	//NOTE: This can be in a separate class since it doesn't need to change fields in ColorChoice
-	class ChoiceListener implements ActionListener{
-		private ArrayList<JCheckBox> choices;
 		
-		public ChoiceListener(ArrayList<JCheckBox> choices){
-			this.choices = choices;
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// TODO Generate empty color bars
-			for(JCheckBox i: choices){
-				if (i.isSelected()){
-					System.out.println(((JCheckBox) e.getSource()).getName());
-				}
-			}
-			
+	
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		JButton o = (JButton) e.getSource();
+		String label = o.getText();
+		if(label.equals( "GO")){
+			Bars bar = new Bars();
+			bar.setVisible(true);
+			System.out.println("Selected:"+selected);	//Print Selected
 		}
 		
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void itemStateChanged(ItemEvent e) {
 		// TODO Auto-generated method stub
-		
+	
+		JCheckBox box = (JCheckBox) e.getSource();
+		if (box.isSelected()){
+			String label = box.getName();
+			if(!selected.contains(label)) selected.add(label);
+			
+		}
+		else{
+			String label = box.getName();
+			selected.remove(label);
+		}
 	}
 
 }
