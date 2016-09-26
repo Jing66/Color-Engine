@@ -19,7 +19,7 @@ public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 	ArrayList<JCheckBox> choices ;
 	ArrayList<String> selected = new ArrayList<String>();
 	
-	JLabel statusbar = new JLabel("initial");
+	
 	/**
 	 * Launch the application.
 	 */
@@ -81,7 +81,6 @@ public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 			
 		}
 		
-		add(statusbar);
 		
 		getContentPane().add(Box.createRigidArea(new Dimension(0,5)));
 		
@@ -113,15 +112,6 @@ public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 			}
 		});
 		add(close);
-		
-		//++++++++++++++++Reset Button++++++++++++NEED OTHER THAN ANYNOUMOUS FUNCTION
-		JButton reset = new JButton("reset");
-		reset.addActionListener(this);
-		add(reset);
-//		buttonPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-//		setContentPane(contentPane);
-		setSize(1000,1500);
-//		buttonPane.setVisible(true);
 	}
 	
 	
@@ -133,6 +123,7 @@ public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 		String label = o.getText();
 		if(label.equals( "GO")){
 			Bars bar = new Bars(selected);
+			bar.pack();
 			//TODO: In Bars class, modify grids of empty color bars and while loop
 			bar.setVisible(true);
 			System.out.println("Selected:"+selected);	//Print Selected
