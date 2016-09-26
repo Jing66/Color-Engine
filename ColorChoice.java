@@ -9,10 +9,11 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 
-public class ColorChoice extends JFrame {
+public class ColorChoice extends JFrame implements ActionListener{
 
 	private JPanel contentPane;
-
+	ArrayList<JCheckBox> choices ;
+	
 	JLabel statusbar = new JLabel("initial");
 	/**
 	 * Launch the application.
@@ -47,7 +48,7 @@ public class ColorChoice extends JFrame {
 		String[] securities = {"NFP", "ISM", "GDP","Oil","Gasoline" };
 		GridLayout test = new GridLayout((securities.length)+2,7);
 		getContentPane().setLayout(test);
-		ArrayList<JCheckBox> choices = new ArrayList<JCheckBox>();
+		choices = new ArrayList<JCheckBox>();
 		for(String i: securities){
 			JCheckBox choice = new JCheckBox(i);
 			choices.add(choice);
@@ -77,9 +78,10 @@ public class ColorChoice extends JFrame {
 		
 //###################### BUTTONS#############################
 		ButtonListener listener = new ButtonListener();
+		ChoiceListener goListener = new ChoiceListener(choices);
 		//++++++++++++++++Submit Button++++++++++++
 		JButton submit = new JButton("GO");
-		submit.addActionListener(listener);
+		submit.addActionListener(goListener);
 		//submit.setBounds(10, 10, 10, 10);
 		//submit.setPreferredSize(new Dimension(10,40));
 		getContentPane().add(submit);
@@ -139,17 +141,28 @@ public class ColorChoice extends JFrame {
 	
 	//NOTE: This can be in a separate class since it doesn't need to change fields in ColorChoice
 	class ChoiceListener implements ActionListener{
-		private ArrayList<String> choices;
+		private ArrayList<JCheckBox> choices;
 		
-		public ChoiceListener(ArrayList<String> choices){
+		public ChoiceListener(ArrayList<JCheckBox> choices){
 			this.choices = choices;
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Generate empty color bars
+			for(JCheckBox i: choices){
+				if (i.isSelected()){
+					System.out.println(((JCheckBox) e.getSource()).getName());
+				}
+			}
 			
 		}
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 
