@@ -12,8 +12,9 @@ import javax.swing.border.EmptyBorder;
 
 
 public class ColorChoice extends JFrame implements ActionListener, ItemListener{
-
+	
 	private JPanel contentPane;
+	//Personalized fields
 	ArrayList<JCheckBox> choices ;
 	ArrayList<String> selected = new ArrayList<String>();
 	
