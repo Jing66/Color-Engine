@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.*;
 
 import javax.swing.*;
@@ -42,16 +43,25 @@ public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 	 * Create the frame.
 	 */
 	public ColorChoice() {
-//		JTextField jtf = new JTextField(20);
-//		add(jtf);
-		
 		setTitle("Colors Version 1");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		//add(new JLabel("NAME"));
 		
-		//TODO: securities to be replaced by searching the db directory
-		String[] securities = {"NFP", "ISM", "GDP","Oil","Gasoline" };
-		GridLayout test = new GridLayout((securities.length)+2,7);
+		
+		/*Get files from /db*/
+		ArrayList<String> securities = new ArrayList<String>();
+		File folder = new File("/Users/liujingyun/Desktop/Docs"); //NOTE: Path to be changed
+		File[] listOfFiles = folder.listFiles();
+
+		for (File file : listOfFiles) {
+		    if (file.isFile()) {
+		        String name = file.getName();
+		        securities.add(name);
+		    }
+		}
+		
+		//String[] securities = {"NFP", "ISM", "GDP","Oil","Gasoline" };
+		//TODO: make a scroll panel and make the layout look better
+		GridLayout test = new GridLayout((securities.size())+2,4);
 		getContentPane().setLayout(test);
 		choices = new ArrayList<JCheckBox>();
 		for(String i: securities){
@@ -109,38 +119,31 @@ public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 		add(reset);
 //		buttonPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 //		setContentPane(contentPane);
-		setSize(1000,1000);
+		setSize(1000,1500);
 //		buttonPane.setVisible(true);
 	}
 	
 	
-//#########################BUTTON LISTENER CLASS#################################	
-	
-		
-	
-
+//#########################GO TO NEXT PANEL#################################	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		JButton o = (JButton) e.getSource();
 		String label = o.getText();
 		if(label.equals( "GO")){
-			Bars bar = new Bars();
+			Bars bar = new Bars(selected);
+			//TODO: In Bars class, modify grids of empty color bars and while loop
 			bar.setVisible(true);
 			System.out.println("Selected:"+selected);	//Print Selected
 		}
-		
 	}
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub
-	
 		JCheckBox box = (JCheckBox) e.getSource();
 		if (box.isSelected()){
 			String label = box.getName();
 			if(!selected.contains(label)) selected.add(label);
-			
 		}
 		else{
 			String label = box.getName();

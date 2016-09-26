@@ -35,7 +35,7 @@ public class Bars extends JFrame {
 	 * Create the frame.
 	 */
 	public Bars() {
-		setTitle("Bars Ready");
+		setTitle("Bars Test");
 		
 		
 		
@@ -46,12 +46,14 @@ public class Bars extends JFrame {
 		contentPane.setLayout(new BorderLayout(5, 10));
 		setContentPane(contentPane);
 		
-		JButton test = new JButton("test");
-		add(test);
-		
+//		JButton test = new JButton("test");
+//		add(test);
+//		
 	}
 	
 	public Bars(ArrayList<String> choices){
+		//TODO: make grids and empty bars
+		setTitle("Bars Ready");
 		
 	}
 	
