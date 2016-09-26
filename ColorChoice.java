@@ -54,7 +54,8 @@ public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 
 		for (File file : listOfFiles) {
 		    if (file.isFile()) {
-		        String name = file.getName();
+		        String fullName = file.getName();
+		        String name = fullName.split("\\.")[0];
 		        securities.add(name);
 		    }
 		}
