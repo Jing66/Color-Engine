@@ -12,12 +12,12 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 
-public class ColorChoice extends JFrame implements ActionListener, ItemListener{
+public class ColorChoice extends JFrame implements ActionListener{
 	
 	private JPanel contentPane;
 	//Personalized fields and test git
 	ArrayList<JCheckBox> choices ;
-	ArrayList<String> selected = new ArrayList<String>();
+	Hashtable<String,Integer> selected = new Hashtable<String,Integer>();
 	
 	
 	/**
@@ -69,15 +69,15 @@ public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 			//Add a Checkbox
 			JCheckBox choice = new JCheckBox(i, false);
 			choice.setName(i);
-			choice.addItemListener(this);
+			choice.addActionListener(this);
 			choices.add(choice);
 			getContentPane().add(choice);
 			//Group radioButton. 
 			ButtonGroup buttonGroup = new ButtonGroup();
 			JRadioButton bond = new JRadioButton("Bond", false);
-			bond.setActionCommand(i+" Bond");
+			bond.setActionCommand(i+"=BOND");
 			JRadioButton inverse = new JRadioButton("Inverse", false);
-			inverse.setActionCommand(i+" Inverse");
+			inverse.setActionCommand(i+"=INVERSE");
 			buttonGroup.add(bond);
 			buttonGroup.add(inverse);
 			//buttonGroup.add(choice);
@@ -144,23 +144,43 @@ public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 		if(source instanceof JRadioButton){
 			JRadioButton o = (JRadioButton)source;
 			String commandFull = o.getActionCommand();
-			String command = commandFull.split(" ")[1];
-			System.out.print(command);
+			String item = commandFull.split("=")[0];
+			
+			String command = commandFull.split("=")[1];
+			int commandInt = 0;
+			
+			if(command.equals("INVERSE")){ commandInt = 1;}
+			
+			//put command into hashtable
+			selected.put(item, commandInt);
+			
+		}
+		
+		if (source instanceof JCheckBox){
+			AbstractButton box = (AbstractButton) e.getSource();
+			if (box.isSelected()){
+				String label = box.getName();
+				if(!selected.contains(label)) selected.put(label,0);
+			}
+			else{
+				String label = box.getName();
+				selected.remove(label);
+			}
 		}
 		
 	}
 
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		AbstractButton box = (AbstractButton) e.getSource();
-		if (box.isSelected()){
-			String label = box.getName();
-			if(!selected.contains(label)) selected.add(label);
-		}
-		else{
-			String label = box.getName();
-			selected.remove(label);
-		}
-	}
+//	@Override
+//	public void itemStateChanged(ItemEvent e) {
+//		AbstractButton box = (AbstractButton) e.getSource();
+//		if (box.isSelected()){
+//			String label = box.getName();
+//			if(!selected.contains(label)) selected.put(label,0);
+//		}
+//		else{
+//			String label = box.getName();
+//			selected.remove(label);
+//		}
+//	}
 
 }
