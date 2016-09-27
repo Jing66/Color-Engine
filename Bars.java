@@ -6,6 +6,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,9 +26,9 @@ public class Bars extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ArrayList<String> test = new ArrayList<String>();
-					test.add("a");
-					test.add("b");
+					Hashtable<String,Integer> test = new Hashtable<String,Integer>();
+					test.put("a",1);
+					test.put("b",0);
 					Bars frame = new Bars(test);
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -42,8 +44,6 @@ public class Bars extends JFrame {
 	public Bars() {
 		setTitle("Bars Test");
 		
-		
-		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -56,7 +56,7 @@ public class Bars extends JFrame {
 //		
 	}
 	
-	public Bars(ArrayList<String> choices){
+	public Bars(Hashtable<String,Integer> choices){
 		//TODO: make grids and empty bars
 		setTitle("Bars Ready");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,10 +65,13 @@ public class Bars extends JFrame {
 		contentPane.setBorder(new EmptyBorder(8, 10, 8, 10));
 		contentPane.setLayout(new BorderLayout(5, 10));
 		setContentPane(contentPane);
-		
+		//grid layout
 		GridLayout test = new GridLayout((choices.size())+2,4);
 		getContentPane().setLayout(test);
-		for (String i : choices){
+		Enumeration<String> keys = choices.keys();
+		while (keys.hasMoreElements()){
+			String i = keys.nextElement();
+			//TODO: Generate Empty Bars
 			JButton button = new JButton(i);
 			System.out.println("\n button names:"+i);
 			add(button);
