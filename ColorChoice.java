@@ -43,6 +43,11 @@ public class ColorChoice extends JFrame implements ActionListener{
 	 * Create the frame.
 	 */
 	public ColorChoice() {
+		
+		//++++++++++++Add ScrollPanel+++++++++++++++++++
+		//TODO: Add scroll panel to this
+		JScrollPane scrollPane = new JScrollPane();
+				
 		setTitle("Colors Version 1");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
@@ -100,7 +105,6 @@ public class ColorChoice extends JFrame implements ActionListener{
 //		JPanel buttonPane = new JPanel();
 //		buttonPane.setLayout(new BoxLayout(buttonPane,BoxLayout.Y_AXIS));
 		
-//###################### BUTTONS#############################
 		
 		//++++++++++++++++Submit Button++++++++++++
 		JButton submit = new JButton("GO");
@@ -119,6 +123,9 @@ public class ColorChoice extends JFrame implements ActionListener{
 			}
 		});
 		add(close);
+		
+		//getContentPane().add(scrollPane);
+		
 	}
 	
 	
