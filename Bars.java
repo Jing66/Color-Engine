@@ -1,7 +1,13 @@
 package colors;
-
+/**
+ * Bars: Second panel to generate animation
+ * @author liujingyun
+ */
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,11 +15,15 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.SpringLayout;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 public class Bars extends JFrame {
 
@@ -28,7 +38,7 @@ public class Bars extends JFrame {
 				try {
 					Hashtable<String,Integer> test = new Hashtable<String,Integer>();
 					test.put("a",1);
-					test.put("b",0);
+					test.put("b",0);test.put("c",0);
 					Bars frame = new Bars(test);
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -66,29 +76,57 @@ public class Bars extends JFrame {
 		contentPane.setLayout(new BorderLayout(5, 10));
 		setContentPane(contentPane);
 		//grid layout
-		GridLayout test = new GridLayout((choices.size())+2,4);
+		GridLayout test = new GridLayout((choices.size())+2,1);
 		getContentPane().setLayout(test);
 		Enumeration<String> keys = choices.keys();
 		while (keys.hasMoreElements()){
+			
 			String i = keys.nextElement();
-			//TODO: Generate Empty Bars
-			JButton button = new JButton(i);
-			System.out.println("\n button names:"+i);
-			add(button);
+			PanelBars barPane = new PanelBars(i);
+			
+			getContentPane().add(barPane);
+			contentPane.add(Box.createRigidArea(new Dimension(10,10)));
+			
 		}
 		
 	}
 	
 	/**********************PanelBar Class***********************/
 	class PanelBars extends JPanel{
-		private JSplitPane splitPane;
+		private JPanel pane;
 		
-		public void PanelBar(){
+		public PanelBars(String i){
+			pane = new JPanel();
+			SpringLayout layout = new SpringLayout();
+			
+			setLayout(layout);
+			//Add label
+			JLabel label = new JLabel(i);
+			//Add table
+			DefaultTableModel model = new DefaultTableModel(1,50);
+			
+			JTable table = new JTable(model);
+			layout.putConstraint(SpringLayout.WEST, label, 5, SpringLayout.EAST,pane);
+			setLayout(layout);
+			
+			add(label);
+			add(table);
 			
 		}
 		
 	}
 	
-	
+	/**********************TableBar Class***********************/
+	class BarTable extends JTable{
+		private JTable table;
+		
+		public BarTable(){
+			DefaultTableModel model = new DefaultTableModel(1,50);
+			JTable table = new JTable(model);
+			this.table=table;
+		}
+	}
 
+	
+	
 }
