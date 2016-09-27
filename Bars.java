@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 
 public class Bars extends JFrame {
@@ -69,8 +70,18 @@ public class Bars extends JFrame {
 		getContentPane().setLayout(test);
 		for (String i : choices){
 			JButton button = new JButton(i);
-			System.out.println("button names:"+i);
+			System.out.println("\n button names:"+i);
 			add(button);
+		}
+		
+	}
+	
+	/**********************PanelBar Class***********************/
+	class PanelBars extends JPanel{
+		private JSplitPane splitPane;
+		
+		public void PanelBar(){
+			
 		}
 		
 	}

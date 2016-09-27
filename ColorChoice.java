@@ -66,19 +66,26 @@ public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 		getContentPane().setLayout(test);
 		choices = new ArrayList<JCheckBox>();
 		for(String i: securities){
+			//Add a Checkbox
 			JCheckBox choice = new JCheckBox(i, false);
 			choice.setName(i);
 			choice.addItemListener(this);
 			choices.add(choice);
 			getContentPane().add(choice);
+			//Group radioButton. 
 			ButtonGroup buttonGroup = new ButtonGroup();
-			JRadioButton bond = new JRadioButton("Bond", true);
+			JRadioButton bond = new JRadioButton("Bond", false);
+			bond.setActionCommand(i+" Bond");
 			JRadioButton inverse = new JRadioButton("Inverse", false);
+			inverse.setActionCommand(i+" Inverse");
 			buttonGroup.add(bond);
 			buttonGroup.add(inverse);
+			//buttonGroup.add(choice);
+			//Add RadioButton
 			getContentPane().add(bond);
 			getContentPane().add(inverse);
-			
+			bond.addActionListener(this);
+			inverse.addActionListener(this);
 		}
 		
 		
@@ -118,21 +125,34 @@ public class ColorChoice extends JFrame implements ActionListener, ItemListener{
 //#########################GO TO NEXT PANEL#################################	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		JButton o = (JButton) e.getSource();
-		String label = o.getText();
-		if(label.equals( "GO")){
-			Bars bar = new Bars(selected);
-			bar.pack();
-			//TODO: In Bars class, modify grids of empty color bars and while loop
-			bar.setVisible(true);
-			System.out.println("Selected:"+selected);	//Print Selected
+		Object source = e.getSource();
+		
+		//If a JButton is clicked
+		if (source instanceof JButton){
+			JButton o = (JButton) source;
+			String label = o.getText();
+			if(label.equals( "GO")){
+				Bars bar = new Bars(selected);
+				bar.pack();
+				//TODO: In Bars class, modify grids of empty color bars and while loop
+				bar.setVisible(true);
+				System.out.println("Selected:"+selected);	//Print Selected
+			}
 		}
+		
+		//If RadioButton is selected
+		if(source instanceof JRadioButton){
+			JRadioButton o = (JRadioButton)source;
+			String commandFull = o.getActionCommand();
+			String command = commandFull.split(" ")[1];
+			System.out.print(command);
+		}
+		
 	}
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		JCheckBox box = (JCheckBox) e.getSource();
+		AbstractButton box = (AbstractButton) e.getSource();
 		if (box.isSelected()){
 			String label = box.getName();
 			if(!selected.contains(label)) selected.add(label);
