@@ -29,7 +29,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 				try {
 					ColorChoice frame = new ColorChoice();
 					//pack
-					frame.pack();
+					//frame.pack();
 					frame.setVisible(true);
 					
 				} catch (Exception e) {
@@ -47,18 +47,25 @@ public class ColorChoice extends JFrame implements ActionListener{
 		//++++++++++++Add ScrollPanel+++++++++++++++++++		
 		setTitle("Colors Version 1");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 750, 600);
 		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		BoxLayout boxlayout = new BoxLayout(contentPane, BoxLayout.Y_AXIS);
-		contentPane.setLayout(boxlayout);
-		contentPane.setBorder(new EmptyBorder(new Insets(150, 200, 150, 200)));
-		
-		/*Get files from /db*/
+		contentPane.setBorder(new EmptyBorder(15, 15, 15, 15));
+
+		//+++++++++++++++Set GridBagLayout+++++++++++++++++
+		contentPane.setLayout(new GridBagLayout());
+		GridBagConstraints left = new GridBagConstraints();
+		left.anchor = GridBagConstraints.WEST;
+        left.weightx = 3.0;
+        GridBagConstraints right = new GridBagConstraints();
+        right.weightx = 3.0;
+        right.fill = GridBagConstraints.HORIZONTAL;
+        right.gridwidth = GridBagConstraints.REMAINDER;
+        GridBagConstraints middle = new GridBagConstraints();
+        middle.weightx = 3.0;
+		/******************Get files from /db*******************/
 		ArrayList<String> securities = new ArrayList<String>();
 		File folder = new File("/Users/liujingyun/Desktop/Docs"); //NOTE: Path to be changed
 		File[] listOfFiles = folder.listFiles();
-
 		for (File file : listOfFiles) {
 		    if (file.isFile()) {
 		        String fullName = file.getName();
@@ -66,9 +73,8 @@ public class ColorChoice extends JFrame implements ActionListener{
 		        securities.add(name);
 		    }
 		}
-		
 		//String[] securities = {"NFP", "ISM", "GDP","Oil","Gasoline" };
-		//TODO: make a scroll panel and make the layout look better
+		
 		GridLayout test = new GridLayout((securities.size())+2,4);
 		getContentPane().setLayout(test);
 		choices = new ArrayList<JCheckBox>();
@@ -78,7 +84,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 			choice.setName(i);
 			choice.addActionListener(this);
 			choices.add(choice);
-			contentPane.add(choice);
+			contentPane.add(choice,left);
 			//Group radioButton. 
 			ButtonGroup buttonGroup = new ButtonGroup();
 			JRadioButton bond = new JRadioButton("Bond", false);
@@ -89,30 +95,20 @@ public class ColorChoice extends JFrame implements ActionListener{
 			buttonGroup.add(inverse);
 			//buttonGroup.add(choice);
 			//Add RadioButton
-			contentPane.add(bond);
-			contentPane.add(inverse);
+			contentPane.add(bond,middle);
+			contentPane.add(inverse,right);
 			bond.addActionListener(this);
 			inverse.addActionListener(this);
 		}
 		
-		
-		//getContentPane().add(Box.createRigidArea(new Dimension(0,5)));
-		
-//		contentPane.setLayout(new BorderLayout(0, 0));
-		
-//		JPanel buttonPane = new JPanel();
-//		buttonPane.setLayout(new BoxLayout(buttonPane,BoxLayout.Y_AXIS));
-		
-		
+	
 		//++++++++++++++++Submit Button++++++++++++
 		JButton submit = new JButton("GO");
 		submit.addActionListener(this);
 		//submit.setBounds(10, 10, 10, 10);
 		//submit.setPreferredSize(new Dimension(10,40));
 		contentPane.add(submit);
-//		JPanel panel = new JPanel();
-//		getContentPane().add(panel);
-		
+
 		//++++++++++++++++Closing Button++++++++++++
 		JButton close = new JButton("close");
 		close.addActionListener(new ActionListener(){

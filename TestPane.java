@@ -28,6 +28,7 @@ public class TestPane extends JFrame  {
 				try {
 					TestPane frame = new TestPane();
 					frame.setVisible(true);
+					//frame.pack();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -49,21 +50,24 @@ public class TestPane extends JFrame  {
 		//add GridBagLayout
 		contentPane.setLayout(new GridBagLayout());
 		GridBagConstraints left = new GridBagConstraints();
-        left.anchor = GridBagConstraints.EAST;
+		left.anchor = GridBagConstraints.WEST;
+        left.weightx = 3.0;
         GridBagConstraints right = new GridBagConstraints();
-        right.weightx = 52.0;
+        right.weightx = 3.0;
         right.fill = GridBagConstraints.HORIZONTAL;
         right.gridwidth = GridBagConstraints.REMAINDER;
-		
+        
+        GridBagConstraints middle = new GridBagConstraints();
+        middle.weightx = 3.0;
 		//+++++++++++++++++++++add conponents
-		JLabel label1 = new JLabel("1");
-		JLabel label2 = new JLabel("2");
-		JLabel label3 = new JLabel("3");
+		JLabel label1 = new JLabel("11111111111");
+		JLabel label2 = new JLabel("22");
+		JLabel label3 = new JLabel("3333333");
 		JButton button1 = new JButton("1");
 		contentPane.add(label1,left);
-		contentPane.add(label2,right);
-		contentPane.add(label3,left);
-		//contentPane.add(BorderLayout.SOUTH, button1);
+		contentPane.add(label2,middle);
+		contentPane.add(label3,right);
+		contentPane.add(button1,left);
 		//+++++++++++++++++add scroll panel
 		JScrollPane scrollPane = new JScrollPane(contentPane);
 		setContentPane(scrollPane);
