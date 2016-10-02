@@ -6,6 +6,15 @@ package colors;
 //import org.apache.poi.ss.usermodel.*;
 //import org.apache.poi.ss.util.*;
 //import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import com.bloomberglp.blpapi.CorrelationID;
+import com.bloomberglp.blpapi.Element;
+import com.bloomberglp.blpapi.Event;
+import com.bloomberglp.blpapi.Message;
+import com.bloomberglp.blpapi.MessageIterator;
+import com.bloomberglp.blpapi.Request;
+import com.bloomberglp.blpapi.Service;
+import com.bloomberglp.blpapi.Session;
+import com.bloomberglp.blpapi.SessionOptions;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -14,7 +23,7 @@ import java.io.IOException;
 
 /**
  * process data: get Var from excel, get expectation from Bloomberg, get real-time data from 
- * 				Bloomberg
+ * 	Bloomberg
  * @author liujingyun
  *
  */
@@ -23,70 +32,71 @@ import java.io.IOException;
 public class DataProcess {
 
 	public DataProcess() {
-		// TODO Auto-generated constructor stub
+	// TODO Auto-generated constructor stub
+	}
+
+	/************Read variable from the H4 cell********/
+	public static double getVar(String fileName){
+	double var=0;
+	/*++++++++++++++++++Open an csv file instead++++++++++++++++++*/
+	BufferedReader br = null; 
+	String line= " ";
+	try {
+ 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\"+fileName;
+ 		br = new BufferedReader(new FileReader(fullPath));
+           //======The data is located at 4th line last cell=====
+   		line = br.readLine();
+           line = br.readLine();
+           line = br.readLine();
+           line = br.readLine();
+           String[] values = line.split(",");
+           var = Double.parseDouble(values[values.length-1]);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+	return var;
 	}
 	
-	//************Read variable from the H4 cell********/
-	public static double getVar(String fileName){
-		double var=0;
-//++++++++++++Tried to open .xlsx file but can only open .xls +++++++++++++++++/
-/*  			try{
-			//Workbook wb = WorkbookFactory.create(new File(fileName));
-			Workbook wb = WorkbookFactory.create(new File(fileName));
-			Sheet sheet = wb.getSheetAt(0);
-			Cell cell = null;
-			cell = sheet.getRow(4).getCell(8);
-			System.out.print("Get Cell!\n");
-			var = cell.getNumericCellValue();
-			wb.close();
-		}
-		catch(FileNotFoundException e){
-			System.out.print("File not found");
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		catch (EncryptedDocumentException e) {
-			// TODO Auto-generated catch block
-			System.out.print("EncryptedDocumentException!");
-			e.printStackTrace();
-		} catch (InvalidFormatException e) {
-			// TODO Auto-generated catch block
-			System.out.print("InvalidFormatException!");
-			e.printStackTrace();
-		}  
-******/
-/*++++++++++++++++++Open an csv file instead++++++++++++++++++*/
-		BufferedReader br = null; 
-		String line= " ";
-		try {
-			 br = new BufferedReader(new FileReader(fileName));
-	           //======The data is located at third line last cell=====
-			   line = br.readLine();
-	           line = br.readLine();
-	           line = br.readLine();
-	           String[] values = line.split(",");
-	           var = Double.parseDouble(values[values.length-1]);
-
-	        } catch (FileNotFoundException e) {
-	            e.printStackTrace();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        } finally {
-	            if (br != null) {
-	                try {
-	                    br.close();
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-	            }
-	        }
-		
-		return var;
+	/***********Get expectation value of an indicator ****************************/
+	public static void sendRequest(String indicator) throws Exception {
+		SessionOptions sessionOptions = new SessionOptions();
+ 		sessionOptions.setServerHost("localhost");
+ 		sessionOptions.setServerPort(8194);
+ 		Session session = new Session(sessionOptions);
+ 		if (!session.start()) {
+		 System.out.println("Could not start session.");
+ 		System.exit(1);
+ 		}
+ 		if (!session.openService("//blp/refdata")) {
+ 		System.out.println("Could not open service " +
+ 		"//blp/refdata");
+ 		System.exit(1);
+ 		}
+		 //CorrelationID requestID = new CorrelationID(1);
+ 		Service refDataSvc = session.getService("//blp/refdata");
+		 Request request = refDataSvc.createRequest("ReferenceDataRequest");
+ 		request.append("securities", indicator);
+ 		request.append("fields", "RT_BN_SURVEY_MEDIAN");
+ 		session.sendRequest(request, null);
 	}
-
-	//*********** TESTING ****************************/
+	public static void handleRequest(Event e){
+	}
+	
+	/*********** TESTING ****************************/
+	/*********** TESTING ****************************/
 	public static void main(String[] args){
-		System.out.print(DataProcess.getVar("/Users/liujingyun/Desktop/Change in NFP.csv"));
+	System.out.print(DataProcess.getVar("Change in NFP.csv"));
 	}
 }

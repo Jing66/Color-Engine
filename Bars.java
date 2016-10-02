@@ -72,6 +72,7 @@ public class Bars extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
+		
 		contentPane.setBorder(new EmptyBorder(8, 10, 8, 10));
 		contentPane.setLayout(new BorderLayout(5, 10));
 		setContentPane(contentPane);

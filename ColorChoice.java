@@ -44,13 +44,15 @@ public class ColorChoice extends JFrame implements ActionListener{
 	 */
 	public ColorChoice() {
 		
-		//++++++++++++Add ScrollPanel+++++++++++++++++++
-		//TODO: Add scroll panel to this
-		JScrollPane scrollPane = new JScrollPane();
-				
+		//++++++++++++Add ScrollPanel+++++++++++++++++++		
 		setTitle("Colors Version 1");
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		BoxLayout boxlayout = new BoxLayout(contentPane, BoxLayout.Y_AXIS);
+		contentPane.setLayout(boxlayout);
+		contentPane.setBorder(new EmptyBorder(new Insets(150, 200, 150, 200)));
 		
 		/*Get files from /db*/
 		ArrayList<String> securities = new ArrayList<String>();
@@ -76,7 +78,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 			choice.setName(i);
 			choice.addActionListener(this);
 			choices.add(choice);
-			getContentPane().add(choice);
+			contentPane.add(choice);
 			//Group radioButton. 
 			ButtonGroup buttonGroup = new ButtonGroup();
 			JRadioButton bond = new JRadioButton("Bond", false);
@@ -87,19 +89,15 @@ public class ColorChoice extends JFrame implements ActionListener{
 			buttonGroup.add(inverse);
 			//buttonGroup.add(choice);
 			//Add RadioButton
-			getContentPane().add(bond);
-			getContentPane().add(inverse);
+			contentPane.add(bond);
+			contentPane.add(inverse);
 			bond.addActionListener(this);
 			inverse.addActionListener(this);
 		}
 		
 		
-		getContentPane().add(Box.createRigidArea(new Dimension(0,5)));
+		//getContentPane().add(Box.createRigidArea(new Dimension(0,5)));
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 //		contentPane.setLayout(new BorderLayout(0, 0));
 		
 //		JPanel buttonPane = new JPanel();
@@ -111,7 +109,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 		submit.addActionListener(this);
 		//submit.setBounds(10, 10, 10, 10);
 		//submit.setPreferredSize(new Dimension(10,40));
-		getContentPane().add(submit);
+		contentPane.add(submit);
 //		JPanel panel = new JPanel();
 //		getContentPane().add(panel);
 		
@@ -122,9 +120,10 @@ public class ColorChoice extends JFrame implements ActionListener{
 				System.exit(0);
 			}
 		});
-		add(close);
+		contentPane.add(close);
 		
-		//getContentPane().add(scrollPane);
+		JScrollPane scrollPane = new JScrollPane(contentPane);
+		setContentPane(scrollPane);
 		
 	}
 	
