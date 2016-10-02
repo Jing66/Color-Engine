@@ -135,7 +135,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 			String label = o.getText();
 			if(label.equals( "GO")){
 				Bars bar = new Bars(selected);
-				bar.pack();
+				//bar.pack();
 				//TODO: In Bars class, modify grids of empty color bars and while loop
 				bar.setVisible(true);
 				System.out.println("Selected:"+selected);	//Print Selected
