@@ -94,6 +94,14 @@ public class DataProcess {
 	public static void handleRequest(Event e){
 	}
 	
+	/***********Get Real Time Data of an indicator ****************************/
+	public static double getRealData(String indicator){
+		double var=0;
+		//TODO: get RealTimeData from Bloomberg
+		
+		return var;
+	}
+	
 	/*********** TESTING ****************************/
 	/*********** TESTING ****************************/
 	public static void main(String[] args){

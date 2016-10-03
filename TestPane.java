@@ -121,12 +121,13 @@ public class TestPane extends JFrame  {
          g.setColor(Color.RED);	//set the border to be red
 */
         //generate 20 black rectangles connected together
-        for (int start = 100;start<600;start+=25){
-       	 g.drawRect(start,10,25,30);
+        for (int start = 100;start<600;start+=50){
+       	 g.drawRect(start,10,50,30);
         }
         g.drawString("150K", 350, 10);
         g.setColor(Color.BLACK);
-        
+        g.fillRect(359, 10, 45, 30);
+ /*      
         //Event on certain rectangle
         Rectangle box = new Rectangle(5,10,20,30);
         Graphics2D g2 = (Graphics2D)g;
@@ -142,7 +143,8 @@ public class TestPane extends JFrame  {
 		}
         
         if(change) {g.fillRect(5,10,20,30); g.drawString("TestNumber", 350, 25);}
-        }
+        */
+        } 
      }
 
 }

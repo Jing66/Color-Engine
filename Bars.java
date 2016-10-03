@@ -4,6 +4,7 @@ package colors;
  * @author liujingyun
  */
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -42,8 +43,8 @@ public class Bars extends JFrame {
 			public void run() {
 				try {
 					Hashtable<String,Integer> test = new Hashtable<String,Integer>();
-					test.put("a",1);
-					test.put("b",0);test.put("c",0);test.put("d",0);test.put("e",0);test.put("f",0);
+					test.put("a",1);test.put("aaaaaaaaa",1);
+					test.put("b",0);test.put("ccccccc",0);test.put("dddd",0);test.put("e",0);test.put("f",0);
 					Bars frame = new Bars(test);
 					//frame.pack();
 					frame.setVisible(true);
@@ -76,7 +77,7 @@ public class Bars extends JFrame {
 		//TODO: make grids and empty bars
 		setTitle("Bars Ready");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 950, 600);
+		setBounds(100, 100, 1050, 600);
 		contentPane = new JPanel();
 		
 		contentPane.setBorder(new EmptyBorder(8, 10, 8, 10));
@@ -85,9 +86,10 @@ public class Bars extends JFrame {
 		//++++++++++++++++++Layout++++++++++++++++++++++++++++++++
 		//GridLayout test = new GridLayout((choices.size())+2,1);
 		//getContentPane().setLayout(test);
-		BoxLayout boxlayout = new BoxLayout(contentPane, BoxLayout.PAGE_AXIS);  //Y_AXIS: vertical
+		BoxLayout boxlayout = new BoxLayout(contentPane, BoxLayout.Y_AXIS);  //Y_AXIS: vertical
 		contentPane.setLayout(boxlayout);
 		
+		//++++++++++++++++++Loop to Draw Rectangles++++++++++++++
 		Enumeration<String> keys = choices.keys();
 		int count = 0;
 		while (keys.hasMoreElements()){
@@ -95,11 +97,19 @@ public class Bars extends JFrame {
 			String i = keys.nextElement();
 			//Draw Rectangle
 			RectDraw rect = new RectDraw(i,count,choices.get(i));
-			String text = "<html><B>"+i+"</B> </html>";
+			//*************Add fake Expectation value and VAR**************
+			//USE GRIDBAGLAYOUT IF NEEDED
+			double exp = 135.9;
+			double var = 12.4;
+			String text = i+"     E: "+exp + ",  Var:"+var;
 			JLabel indicator = new JLabel(text);
-			indicator.setFont(new Font("Serif", Font.PLAIN, 20));
+			indicator.setAlignmentX(CENTER_ALIGNMENT);
+			indicator.setFont(new Font("Serif", Font.BOLD, 20));
 			contentPane.add(indicator);
+		
+			//Draw Rectangle
 			contentPane.add(rect);
+			
 		}
 		
 	}
@@ -110,22 +120,33 @@ public class Bars extends JFrame {
 		private String name;
 		private int bond; 
 		private int order;
-	//	private Rectangle box;
+		private final int SINGLE_CELL_LEN = 15;
 		
+		//Constructor
 		public RectDraw(String name, int order, int bond){
 			setPreferredSize(new Dimension(600,20));
+			setLayout(new FlowLayout());
 			this.name = name;
 			this.order = order;
 			this.bond = bond;
 		}
 		
+		//Draw Rectangle
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);  
-			for (int start = 100;start<900;start+=25){
-		       	 g.drawRect(start,order*4,25,30);
+			for (int start = 100;start<925;start+=75){
+		       	 g.drawRect(start,5,75,30);
 		    }
 			g.setFont(new Font("default", Font.BOLD, 16));
-		    //g.drawString(name, 500, order*10);	
+		    //g.drawString(name, 500, order*10);
+			
+			//**************TODO: Get Real Data and show Colors***************
+			double realData = DataProcess.getRealData(name);
+			double var = DataProcess.getVar(name);
+			double numVar =  var/realData;
+			//if BOND: paint numVar length to right RED. else paint left Blue
+			double fillLength = numVar * SINGLE_CELL_LEN;
+			//paint from middle
 		}
 	}
 	

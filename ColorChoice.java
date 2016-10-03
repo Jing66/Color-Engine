@@ -146,18 +146,13 @@ public class ColorChoice extends JFrame implements ActionListener{
 		if(source instanceof JRadioButton){
 			JRadioButton o = (JRadioButton)source;
 			String commandFull = o.getActionCommand();
-			String item = commandFull.split("=")[0];
-			
+			String item = commandFull.split("=")[0];	
 			String command = commandFull.split("=")[1];
-			int commandInt = 0;
-			
-			if(command.equals("INVERSE")){ commandInt = 1;}
-			
+			int commandInt = 0;		
+			if(command.equals("INVERSE")){ commandInt = 1;}		
 			//put command into hashtable
-			selected.put(item, commandInt);
-			
+			selected.put(item, commandInt);	
 		}
-		
 		if (source instanceof JCheckBox){
 			AbstractButton box = (AbstractButton) e.getSource();
 			if (box.isSelected()){
@@ -171,18 +166,5 @@ public class ColorChoice extends JFrame implements ActionListener{
 		}
 		
 	}
-
-//	@Override
-//	public void itemStateChanged(ItemEvent e) {
-//		AbstractButton box = (AbstractButton) e.getSource();
-//		if (box.isSelected()){
-//			String label = box.getName();
-//			if(!selected.contains(label)) selected.put(label,0);
-//		}
-//		else{
-//			String label = box.getName();
-//			selected.remove(label);
-//		}
-//	}
 
 }
