@@ -45,7 +45,8 @@ public class Bars extends JFrame {
 			public void run() {
 				try {
 					Hashtable<String,Integer> test = new Hashtable<String,Integer>();
-					test.put("a",1);test.put("aaaaaaaaa",1);
+					test.put("a",0);
+					test.put("aaaaaaaaa",1);
 					//test.put("b",0);test.put("ccccccc",0);test.put("dddd",0);test.put("e",0);test.put("f",0);
 					Bars frame = new Bars(test);
 					//frame.pack();
@@ -122,7 +123,10 @@ public class Bars extends JFrame {
 		private String name;
 		private int bond; 
 		private int order;
-		private final int SINGLE_CELL_LEN = 15;
+		private final int FULL_RECT_LEN = 150;
+		private final int SINGLE_CELL_LEN = FULL_RECT_LEN/10;
+		private final int MIDDLE_RECT_LEN = 80;
+		
 		
 		//Constructor
 		public RectDraw(String name, int order, int bond){
@@ -133,38 +137,53 @@ public class Bars extends JFrame {
 			this.bond = bond;
 		}
 		
-		//Draw Rectangle
+		//Draw Rectangle: Each Rectangle length 125, startX=100, Width=30, startY = 5; middle rect length = 75;
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);  
 			int middleX = 100;
 			int countBox = 0;
-			for (int start = 100;start<925;start+=75){	
-		       	 g.drawRect(start,5,75,30);
-		       	 countBox++;
-		       	 if(countBox == 6){middleX = start;}
+			int startX = 80;
+			while (startX<=FULL_RECT_LEN*6+MIDDLE_RECT_LEN){	
+				if(countBox == 3){middleX = startX+MIDDLE_RECT_LEN/2;g.drawRect(startX,5,MIDDLE_RECT_LEN,30);startX+=MIDDLE_RECT_LEN;countBox++;continue;}
+				g.drawRect(startX,5,FULL_RECT_LEN,30);
+		       	startX+=FULL_RECT_LEN;countBox++;
 		    }
 			g.setFont(new Font("default", Font.BOLD, 16));
 			
-		    //g.drawString(name, 500, order*10);
-			
+		   
 			//**************TODO: Get Real Data and show Colors***************
 			/*double realData = DataProcess.getRealData(name);
 			double var = DataProcess.getVar(name);
-			double numVar =  var/realData;*/
-			double numVar = 3.4;
-			//if BOND: paint numVar length to right RED. else paint left Blue
-			double fillLength = numVar * SINGLE_CELL_LEN;
-			//paint from middle
-			double lengthLeft = 0;
+			double mVar =  var/(realData - exp);*/
+			double mVar = 0;
+			int numSmallBox = (int) Math.abs((10*mVar));
+			float countSmallBox = 0;
 			Graphics2D g2d = (Graphics2D)g;
-			for(int i=1;i<numVar+1;i+=1){
-				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, i*0.2f));
-		        //if BOND
-				g.fillRect(middleX+i*SINGLE_CELL_LEN, 5, SINGLE_CELL_LEN, 30);
-		        if(i==numVar-1){lengthLeft =fillLength - i*SINGLE_CELL_LEN; }
-		        System.out.print("paint one box!\n");
+			
+			//If (BOND && mVar >0)||(Inverse && mVar<0) : red on right
+			if(bond == 0&& mVar > 0 || bond ==1 && mVar <0){
+				mVar = Math.abs(mVar);
+				int startFill=middleX+MIDDLE_RECT_LEN/2;
+				while(countSmallBox < numSmallBox){
+					g.setColor(Color.RED);
+					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
+					g.fillRect(startFill, 5, SINGLE_CELL_LEN, 30);
+					startFill +=SINGLE_CELL_LEN;
+					countSmallBox++;
+				}
 			}
-			g.fillRect(middleX+(int)numVar*SINGLE_CELL_LEN,5,(int)lengthLeft,30);
+			else{
+				mVar = Math.abs(mVar);
+				int startFill=middleX-MIDDLE_RECT_LEN/2-SINGLE_CELL_LEN;
+				while(countSmallBox < numSmallBox){
+					g.setColor(Color.BLUE);
+					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
+					g.fillRect(startFill, 5, SINGLE_CELL_LEN, 30);
+					startFill -=SINGLE_CELL_LEN;
+					countSmallBox++;
+				}
+			}
+			//If mVar = 0, grey box in middle
 			
 		}
 	}
