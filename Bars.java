@@ -1,4 +1,5 @@
 package colors;
+import java.awt.AlphaComposite;
 /**
  * Bars: Second panel to generate animation
  * @author liujingyun
@@ -11,6 +12,7 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
@@ -44,7 +46,7 @@ public class Bars extends JFrame {
 				try {
 					Hashtable<String,Integer> test = new Hashtable<String,Integer>();
 					test.put("a",1);test.put("aaaaaaaaa",1);
-					test.put("b",0);test.put("ccccccc",0);test.put("dddd",0);test.put("e",0);test.put("f",0);
+					//test.put("b",0);test.put("ccccccc",0);test.put("dddd",0);test.put("e",0);test.put("f",0);
 					Bars frame = new Bars(test);
 					//frame.pack();
 					frame.setVisible(true);
@@ -134,19 +136,36 @@ public class Bars extends JFrame {
 		//Draw Rectangle
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);  
-			for (int start = 100;start<925;start+=75){
+			int middleX = 100;
+			int countBox = 0;
+			for (int start = 100;start<925;start+=75){	
 		       	 g.drawRect(start,5,75,30);
+		       	 countBox++;
+		       	 if(countBox == 6){middleX = start;}
 		    }
 			g.setFont(new Font("default", Font.BOLD, 16));
+			
 		    //g.drawString(name, 500, order*10);
 			
 			//**************TODO: Get Real Data and show Colors***************
-			double realData = DataProcess.getRealData(name);
+			/*double realData = DataProcess.getRealData(name);
 			double var = DataProcess.getVar(name);
-			double numVar =  var/realData;
+			double numVar =  var/realData;*/
+			double numVar = 3.4;
 			//if BOND: paint numVar length to right RED. else paint left Blue
 			double fillLength = numVar * SINGLE_CELL_LEN;
 			//paint from middle
+			double lengthLeft = 0;
+			Graphics2D g2d = (Graphics2D)g;
+			for(int i=1;i<numVar+1;i+=1){
+				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, i*0.2f));
+		        //if BOND
+				g.fillRect(middleX+i*SINGLE_CELL_LEN, 5, SINGLE_CELL_LEN, 30);
+		        if(i==numVar-1){lengthLeft =fillLength - i*SINGLE_CELL_LEN; }
+		        System.out.print("paint one box!\n");
+			}
+			g.fillRect(middleX+(int)numVar*SINGLE_CELL_LEN,5,(int)lengthLeft,30);
+			
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package colors;
 
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -126,7 +127,11 @@ public class TestPane extends JFrame  {
         }
         g.drawString("150K", 350, 10);
         g.setColor(Color.BLACK);
-        g.fillRect(359, 10, 45, 30);
+        
+        //Test Transparency
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) 0.5));
+        g.fillRect(350, 10, 65, 30);
  /*      
         //Event on certain rectangle
         Rectangle box = new Rectangle(5,10,20,30);
