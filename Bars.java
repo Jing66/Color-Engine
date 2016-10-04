@@ -6,32 +6,24 @@ import java.awt.AlphaComposite;
  */
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
-import javax.swing.Box;
+
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.SpringLayout;
+
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
+
 
 public class Bars extends JFrame {
 
@@ -69,18 +61,14 @@ public class Bars extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(8, 10, 8, 10));
 		contentPane.setLayout(new BorderLayout(5, 10));
-		setContentPane(contentPane);
-		
-//		JButton test = new JButton("test");
-//		add(test);
-//		
+		setContentPane(contentPane);		
 	}
 	
 	public Bars(Hashtable<String,Integer> choices){
 		//TODO: make grids and empty bars
 		setTitle("Bars Ready");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1050, 600);
+		setBounds(30, 100, 1800, 1000);
 		contentPane = new JPanel();
 		
 		contentPane.setBorder(new EmptyBorder(8, 10, 8, 10));
@@ -123,9 +111,9 @@ public class Bars extends JFrame {
 		private String name;
 		private int bond; 
 		private int order;
-		private final int FULL_RECT_LEN = 150;
+		private final int FULL_RECT_LEN = 250;
 		private final int SINGLE_CELL_LEN = FULL_RECT_LEN/10;
-		private final int MIDDLE_RECT_LEN = 80;
+		private final int MIDDLE_RECT_LEN = 150;
 		
 		
 		//Constructor
@@ -142,30 +130,32 @@ public class Bars extends JFrame {
 			super.paintComponent(g);  
 			int middleX = 100;
 			int countBox = 0;
-			int startX = 80;
+			int startX = 50;
 			while (startX<=FULL_RECT_LEN*6+MIDDLE_RECT_LEN){	
 				if(countBox == 3){middleX = startX+MIDDLE_RECT_LEN/2;g.drawRect(startX,5,MIDDLE_RECT_LEN,30);startX+=MIDDLE_RECT_LEN;countBox++;continue;}
 				g.drawRect(startX,5,FULL_RECT_LEN,30);
 		       	startX+=FULL_RECT_LEN;countBox++;
 		    }
-			g.setFont(new Font("default", Font.BOLD, 16));
+			
 			
 		   
-			//**************TODO: Get Real Data and show Colors***************
+			//**************TODO: Get Real Data***************
 			/*double realData = DataProcess.getRealData(name);
 			double var = DataProcess.getVar(name);
 			double mVar =  var/(realData - exp);*/
-			double mVar = 0;
+			double realData = 1430;
+			double mVar = 1.7;
 			int numSmallBox = (int) Math.abs((10*mVar));
 			float countSmallBox = 0;
 			Graphics2D g2d = (Graphics2D)g;
 			
+			//*********************Fill Colors*************************
 			//If (BOND && mVar >0)||(Inverse && mVar<0) : red on right
 			if(bond == 0&& mVar > 0 || bond ==1 && mVar <0){
 				mVar = Math.abs(mVar);
 				int startFill=middleX+MIDDLE_RECT_LEN/2;
 				while(countSmallBox < numSmallBox){
-					g.setColor(Color.RED);
+					g.setColor(Color.BLUE);
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
 					g.fillRect(startFill, 5, SINGLE_CELL_LEN, 30);
 					startFill +=SINGLE_CELL_LEN;
@@ -176,17 +166,27 @@ public class Bars extends JFrame {
 				mVar = Math.abs(mVar);
 				int startFill=middleX-MIDDLE_RECT_LEN/2-SINGLE_CELL_LEN;
 				while(countSmallBox < numSmallBox){
-					g.setColor(Color.BLUE);
+					g.setColor(Color.RED);
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
 					g.fillRect(startFill, 5, SINGLE_CELL_LEN, 30);
 					startFill -=SINGLE_CELL_LEN;
 					countSmallBox++;
 				}
 			}
-			//If mVar = 0, grey box in middle
-			
+			//If Actual == expectation, grey box in middle
+			if(mVar==0){
+				g.setColor(Color.GRAY);
+				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+				g.fillRect(middleX-MIDDLE_RECT_LEN/2, 5, MIDDLE_RECT_LEN, 30);
+			}
+			//Show Actual in middle
+			String actual = Double.toString(realData);
+			g.setColor(Color.BLACK);
+			g.setFont(new Font("TimesRoman", Font.BOLD, 20));
+			g.drawString(actual, middleX-MIDDLE_RECT_LEN/2,30);
 		}
 	}
 	
 	
 }
+

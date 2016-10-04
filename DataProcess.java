@@ -70,6 +70,7 @@ public class DataProcess {
 	}
 	
 	/***********Get expectation value of an indicator ****************************/
+	//send request
 	public static void sendRequest(String indicator) throws Exception {
 		SessionOptions sessionOptions = new SessionOptions();
  		sessionOptions.setServerHost("localhost");
@@ -84,27 +85,61 @@ public class DataProcess {
  		"//blp/refdata");
  		System.exit(1);
  		}
-		 //CorrelationID requestID = new CorrelationID(1);
  		Service refDataSvc = session.getService("//blp/refdata");
 		 Request request = refDataSvc.createRequest("ReferenceDataRequest");
  		request.append("securities", indicator);
+ 		request.append("fields", "NAME");
  		request.append("fields", "RT_BN_SURVEY_MEDIAN");
+ 		request.append("fields", "LAST_PRICE");
+ 		request.append("fields", "TIME");
  		session.sendRequest(request, null);
+ 		boolean continueToLoop = true;
+ 		while (continueToLoop) {
+ 		 Event event = session.nextEvent();
+ 		 switch (event.eventType().intValue()) {
+ 		 	case Event.EventType.Constants.RESPONSE: // final event
+ 		 		continueToLoop = false; // fall through
+ 		 	case Event.EventType.Constants.PARTIAL_RESPONSE:
+ 		 		handleResponseEvent(event);
+ 		 		break;
+ 		 	default:
+ 		 		//handleOtherEvent(event);
+ 		 		break;
+ 		 	}
+ 		 }
 	}
-	public static void handleRequest(Event e){
-	}
-	
-	/***********Get Real Time Data of an indicator ****************************/
-	public static double getRealData(String indicator){
-		double var=0;
-		//TODO: get RealTimeData from Bloomberg
+	 private static void handleResponseEvent(Event event) throws Exception {
 		
-		return var;
-	}
-	
+		 MessageIterator iter = event.messageIterator();
+		 while (iter.hasNext()) {
+			 Message message = iter.next();
+			 message.print(System.out);
+			 
+		 	}
+		 }
+/*	 private static void handleOtherEvent(Event event) throws Exception
+	 {
+		 System.out.println("EventType=" + event.eventType());
+		 MessageIterator iter = event.messageIterator();
+		 while (iter.hasNext()) {
+			 Message message = iter.next();
+			 System.out.println("correlationID=" +
+					 message.correlationID());
+			 System.out.println("messageType=" + message.messageType());
+			 message.print(System.out);
+			 if (Event.EventType.Constants.SESSION_STATUS == event.eventType().intValue()&& "SessionTerminated" ==
+					 message.messageType().toString()){
+				 	System.out.println("Terminating: " +message.messageType());
+				 	System.exit(1);
+			 		}
+		 	}
+	 }*/
+	 
 	/*********** TESTING ****************************/
-	/*********** TESTING ****************************/
-	public static void main(String[] args){
-	System.out.print(DataProcess.getVar("Change in NFP.csv"));
+	/*********** TESTING 
+	 * @throws Exception ****************************/
+	public static void main(String[] args) throws Exception{
+	//System.out.print(DataProcess.getVar("Change in NFP.csv"));
+		DataProcess.sendRequest("NHSPATOT Index");
 	}
 }
