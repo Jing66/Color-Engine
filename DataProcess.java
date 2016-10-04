@@ -1,12 +1,5 @@
 package colors;
-//import org.apache.poi.EncryptedDocumentException;
-//import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-//import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-////Apache Poi library
-//import org.apache.poi.ss.usermodel.*;
-//import org.apache.poi.ss.util.*;
-//import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import com.bloomberglp.blpapi.CorrelationID;
+
 import com.bloomberglp.blpapi.Element;
 import com.bloomberglp.blpapi.Event;
 import com.bloomberglp.blpapi.Message;
@@ -109,31 +102,27 @@ public class DataProcess {
  		 }
 	}
 	 private static void handleResponseEvent(Event event) throws Exception {
-		
 		 MessageIterator iter = event.messageIterator();
 		 while (iter.hasNext()) {
 			 Message message = iter.next();
+			 Element ReferenceDataResponse = message.asElement();
+			 Element securityDataArray =  ReferenceDataResponse.getElement("securityData");
+			 //parse
+			 int numItems = securityDataArray.numValues();
+			 for (int i = 0; i < numItems; ++i) {
+				 Element securityData = securityDataArray.getValueAsElement(i);
+				 String security = securityData.getElementAsString(
+				 "security");
+				 Element fieldData =securityData.getElement("fieldData");
+				 String NAME = fieldData.getElementAsString(" NAME");
+				 double exp = fieldData.getElementAsFloat64(" RT_BN_SURVEY_MEDIAN");
+				 double actual =fieldData.getElementAsFloat64("LAST_PRICE");
+				 String date = fieldData.getElementAsString("TIME");
+			 }
 			 message.print(System.out);
 			 
 		 	}
 		 }
-/*	 private static void handleOtherEvent(Event event) throws Exception
-	 {
-		 System.out.println("EventType=" + event.eventType());
-		 MessageIterator iter = event.messageIterator();
-		 while (iter.hasNext()) {
-			 Message message = iter.next();
-			 System.out.println("correlationID=" +
-					 message.correlationID());
-			 System.out.println("messageType=" + message.messageType());
-			 message.print(System.out);
-			 if (Event.EventType.Constants.SESSION_STATUS == event.eventType().intValue()&& "SessionTerminated" ==
-					 message.messageType().toString()){
-				 	System.out.println("Terminating: " +message.messageType());
-				 	System.exit(1);
-			 		}
-		 	}
-	 }*/
 	 
 	/*********** TESTING ****************************/
 	/*********** TESTING 
