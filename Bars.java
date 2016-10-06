@@ -52,47 +52,45 @@ public class Bars extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @throws Exception 
 	 */
-	public Bars() {
-		setTitle("Bars Test");
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 750, 600);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(8, 10, 8, 10));
-		contentPane.setLayout(new BorderLayout(5, 10));
-		setContentPane(contentPane);		
-	}
-	
-	public Bars(Hashtable<String,Integer> choices){
-		//TODO: make grids and empty bars
+//	
+//	public Bars() {
+//		setTitle("Bars Test");
+//		
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		setBounds(100, 100, 750, 600);
+//		contentPane = new JPanel();
+//		contentPane.setBorder(new EmptyBorder(8, 10, 8, 10));
+//		contentPane.setLayout(new BorderLayout(5, 10));
+//		setContentPane(contentPane);		
+//	}
+//	
+	public Bars(Hashtable<String,Integer> choices) throws Exception{
+		//++++++++++++++++++Layout++++++++++++++++++++++++++++++++
 		setTitle("Bars Ready");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(30, 100, 1800, 1000);
 		contentPane = new JPanel();
-		
 		contentPane.setBorder(new EmptyBorder(8, 10, 8, 10));
-		//contentPane.setLayout(new BorderLayout(5, 10));
 		setContentPane(contentPane);
-		//++++++++++++++++++Layout++++++++++++++++++++++++++++++++
 		//GridLayout test = new GridLayout((choices.size())+2,1);
 		//getContentPane().setLayout(test);
 		BoxLayout boxlayout = new BoxLayout(contentPane, BoxLayout.Y_AXIS);  //Y_AXIS: vertical
 		contentPane.setLayout(boxlayout);
 		
-		//++++++++++++++++++Loop to Draw Rectangles++++++++++++++
+		//++++++++++++++++++Loop to Draw Rectangles, Given Indicator security name++++++++++++++
 		Enumeration<String> keys = choices.keys();
 		int count = 0;
 		while (keys.hasMoreElements()){
 			count++;
-			String i = keys.nextElement();
+			String i = keys.nextElement();	//NOTE: i is indicator security name
 			securities.add(i);
-			//Draw Rectangle
 			RectDraw rect = new RectDraw(i,count,choices.get(i));
-			//*************Add fake Expectation value and VAR**************
-			//USE GRIDBAGLAYOUT IF NEEDED
-			double exp = 135.9;
-			double var = 12.4;
+			//*************Add Expectation value and VAR**************
+			double exp = DataProcess.getBMG(i, 0);
+			double var = DataProcess.getVar(i);
+			
 			String text = i+"     E: "+exp + ",  Var:"+var;
 			JLabel indicator = new JLabel(text);
 			indicator.setAlignmentX(CENTER_ALIGNMENT);
@@ -100,11 +98,13 @@ public class Bars extends JFrame {
 			contentPane.add(indicator);
 			//Draw Rectangle
 			contentPane.add(rect);
+			securities.add(i);		//add security String for next loop calling getActual
 		}
+		
 		//++++++++++++++++++Loop to Fill Colors++++++++++++++++++++++
 		for(int i=0;i<securities.size();i++){
 			String security = securities.get(i);
-			RectFill bar = new RectFill(security, i+1, choices.get(security));
+			RectFill bar = new RectFill(security, choices.get(security));
 			
 		}
 		
@@ -141,17 +141,16 @@ public class Bars extends JFrame {
 		//BOND = 0; INVERSE = 1;
 				private String name;
 				private int bond; 
-				private int order;
 				private final int FULL_RECT_LEN = 250;
 				private final int SINGLE_CELL_LEN = FULL_RECT_LEN/10;
 				private final int MIDDLE_RECT_LEN = 150;
 				
 		//Constructor
-				public RectFill(String name, int order, int bond){
+				public RectFill(String name, int bond){
 					setPreferredSize(new Dimension(600,20));
 					setLayout(new FlowLayout());
 					this.name = name;
-					this.order = order;
+					
 					this.bond = bond;
 				}
 				
@@ -161,50 +160,65 @@ public class Bars extends JFrame {
 					int middleX = 100;
 					
 					//**************TODO: Get Real Data***************
-					/*double realData = DataProcess.getRealData(name);
+					double realData = 0;
+					try {
+						realData = DataProcess.getBMG(name,1);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					double var = DataProcess.getVar(name);
-					double mVar =  var/(realData - exp);*/
-					double realData = 1430;
-					double mVar = 1.7;
-					int numSmallBox = (int) Math.abs((10*mVar));
-					float countSmallBox = 0;
-					Graphics2D g2d = (Graphics2D)g;
-					
-					//*********************Fill Colors*************************
-					//If (BOND && mVar >0)||(Inverse && mVar<0) : red on right
-					if(bond == 0&& mVar > 0 || bond ==1 && mVar <0){
-						mVar = Math.abs(mVar);
-						int startFill=middleX+MIDDLE_RECT_LEN/2;
-						while(countSmallBox < numSmallBox){
-							g.setColor(Color.BLUE);
-							g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
-							g.fillRect(startFill, 5, SINGLE_CELL_LEN, 30);
-							startFill +=SINGLE_CELL_LEN;
-							countSmallBox++;
+					double exp = 0;
+					try {
+						exp = DataProcess.getBMG(name,0);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					double mVar =  var/(realData - exp);
+					//While get Actual data
+					while (mVar != 0 ){
+						int numSmallBox = (int) Math.abs((10*mVar));
+						float countSmallBox = 0;
+						Graphics2D g2d = (Graphics2D)g;
+						
+						//*********************Fill Colors*************************
+						//If (BOND && mVar >0)||(Inverse && mVar<0) : red on right
+						if(bond == 0&& mVar > 0 || bond ==1 && mVar <0){
+							mVar = Math.abs(mVar);
+							int startFill=middleX+MIDDLE_RECT_LEN/2;
+							while(countSmallBox < numSmallBox){
+								g.setColor(Color.BLUE);
+								g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
+								g.fillRect(startFill, 5, SINGLE_CELL_LEN, 30);
+								startFill +=SINGLE_CELL_LEN;
+								countSmallBox++;
+							}
 						}
-					}
-					else{
-						mVar = Math.abs(mVar);
-						int startFill=middleX-MIDDLE_RECT_LEN/2-SINGLE_CELL_LEN;
-						while(countSmallBox < numSmallBox){
-							g.setColor(Color.RED);
-							g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
-							g.fillRect(startFill, 5, SINGLE_CELL_LEN, 30);
-							startFill -=SINGLE_CELL_LEN;
-							countSmallBox++;
+						else{
+							mVar = Math.abs(mVar);
+							int startFill=middleX-MIDDLE_RECT_LEN/2-SINGLE_CELL_LEN;
+							while(countSmallBox < numSmallBox){
+								g.setColor(Color.RED);
+								g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
+								g.fillRect(startFill, 5, SINGLE_CELL_LEN, 30);
+								startFill -=SINGLE_CELL_LEN;
+								countSmallBox++;
+							}
 						}
+						//If Actual == expectation, grey box in middle
+						if(mVar==0){
+							g.setColor(Color.GRAY);
+							g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+							g.fillRect(middleX-MIDDLE_RECT_LEN/2, 5, MIDDLE_RECT_LEN, 30);
+						}
+						//Show Actual in middle
+						String actual = Double.toString(realData);
+						g.setColor(Color.BLACK);
+						g.setFont(new Font("TimesRoman", Font.BOLD, 20));
+						g.drawString(actual, middleX-MIDDLE_RECT_LEN/2,30);
 					}
-					//If Actual == expectation, grey box in middle
-					if(mVar==0){
-						g.setColor(Color.GRAY);
-						g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-						g.fillRect(middleX-MIDDLE_RECT_LEN/2, 5, MIDDLE_RECT_LEN, 30);
-					}
-					//Show Actual in middle
-					String actual = Double.toString(realData);
-					g.setColor(Color.BLACK);
-					g.setFont(new Font("TimesRoman", Font.BOLD, 20));
-					g.drawString(actual, middleX-MIDDLE_RECT_LEN/2,30);
+				
 				}
 		}
 }

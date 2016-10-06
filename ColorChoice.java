@@ -18,7 +18,8 @@ public class ColorChoice extends JFrame implements ActionListener{
 	//Personalized fields and test git
 	ArrayList<JCheckBox> choices ;
 	Hashtable<String,Integer> selected = new Hashtable<String,Integer>();
-	
+	ArrayList<String> securitiesIndex = new ArrayList<String>();	//A list of all securities listed on panel (not NAME)
+	ArrayList<String> securities = new ArrayList<String>();	//A list of all security NAMEs corresponding to securitiesIndex
 	
 	/**
 	 * Launch the application.
@@ -43,7 +44,6 @@ public class ColorChoice extends JFrame implements ActionListener{
 	 * Create the frame.
 	 */
 	public ColorChoice() {
-		
 		//++++++++++++Add ScrollPanel+++++++++++++++++++		
 		setTitle("Colors Version 1");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,19 +62,29 @@ public class ColorChoice extends JFrame implements ActionListener{
         right.gridwidth = GridBagConstraints.REMAINDER;
         GridBagConstraints middle = new GridBagConstraints();
         middle.weightx = 3.0;
-		/******************Get files from /db*******************/
-		ArrayList<String> securities = new ArrayList<String>();
+      //++++++++++++Read Files' names into securitiesIndex+++++++++++++++++++	
+		
 		File folder = new File("/Users/liujingyun/Desktop/Docs"); //NOTE: Path to be changed
 		File[] listOfFiles = folder.listFiles();
 		for (File file : listOfFiles) {
 		    if (file.isFile()) {
 		        String fullName = file.getName();
 		        String name = fullName.split("\\.")[0];
-		        securities.add(name);
+		        securitiesIndex.add(name);
 		    }
 		}
-		//String[] securities = {"NFP", "ISM", "GDP","Oil","Gasoline" };
+		//String[] securities = {"NHSPATOT Index"};
 		
+		
+		//Get the names of the indicators and show
+		try {
+			securities = DataProcess.getNames(securitiesIndex);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		//Show the names to the users to choose
+		//NOTE: When pass to bars, pass security name not NAME field
 		GridLayout test = new GridLayout((securities.size())+2,4);
 		getContentPane().setLayout(test);
 		choices = new ArrayList<JCheckBox>();
@@ -134,9 +144,13 @@ public class ColorChoice extends JFrame implements ActionListener{
 			JButton o = (JButton) source;
 			String label = o.getText();
 			if(label.equals( "GO")){
-				Bars bar = new Bars(selected);
-				//bar.pack();
-				//TODO: In Bars class, modify grids of empty color bars and while loop
+				Bars bar = null;
+				try {
+					bar = new Bars(selected);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}	
 				bar.setVisible(true);
 				System.out.println("Selected:"+selected);	//Print Selected
 			}
@@ -146,7 +160,9 @@ public class ColorChoice extends JFrame implements ActionListener{
 		if(source instanceof JRadioButton){
 			JRadioButton o = (JRadioButton)source;
 			String commandFull = o.getActionCommand();
-			String item = commandFull.split("=")[0];	
+			//--------------NOTE: change NAME to security-----------------
+			String item = getSecurity(commandFull.split("=")[0]);	
+			
 			String command = commandFull.split("=")[1];
 			int commandInt = 0;		
 			if(command.equals("INVERSE")){ commandInt = 1;}		
@@ -156,15 +172,27 @@ public class ColorChoice extends JFrame implements ActionListener{
 		if (source instanceof JCheckBox){
 			AbstractButton box = (AbstractButton) e.getSource();
 			if (box.isSelected()){
-				String label = box.getName();
+				//--------------NOTE: change NAME to security-----------------
+				String label = getSecurity(box.getName());
 				if(!selected.contains(label)) selected.put(label,0);
 			}
 			else{
-				String label = box.getName();
+				String label = getSecurity(box.getName());
 				selected.remove(label);
 			}
 		}
 		
+	}
+
+	
+	/**
+	 * Returns the corresponding security when given the NAME field of it 
+	 * @param  name the NAME field of the security
+	 * @return      the image at the specified URL
+	 */
+	private String getSecurity(String name) {
+		int i = securities.indexOf(name);
+		return securitiesIndex.get(i);
 	}
 
 }
