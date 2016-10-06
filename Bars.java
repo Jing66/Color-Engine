@@ -28,7 +28,7 @@ import javax.swing.border.EmptyBorder;
 public class Bars extends JFrame {
 
 	private JPanel contentPane;
-	public ArrayList<String> securities = new ArrayList<String>();	//A list of what's shown on this panel, in order
+	public ArrayList<String> securities = new ArrayList<String>();	//A list of what's shown on this panel, in order. It's SECURITY not NAME
 	
 	/**
 	 * Launch the application.
@@ -105,10 +105,18 @@ public class Bars extends JFrame {
 		}
 		
 		//++++++++++++++++++Loop to Fill Colors++++++++++++++++++++++
+		
+		//----------NOTE: May need to draw the Rectangles again--------
+		getContentPane().remove(contentPane);
+		JPanel newPane = new JPanel();
+		newPane.setBorder(new EmptyBorder(8, 10, 8, 10));
+		setContentPane(newPane);	
+		newPane.setLayout(boxlayout);
+		
 		for(int i=0;i<securities.size();i++){
 			String security = securities.get(i);
 			RectFill bar = new RectFill(security, choices.get(security));
-			
+			newPane.add(bar);
 		}
 		
 	}
@@ -142,7 +150,7 @@ public class Bars extends JFrame {
 	/**********************Fill Color***********************/
 	private class RectFill extends JPanel{
 		//BOND = 0; INVERSE = 1;
-				private String name;
+				private String name;	//Index of security
 				private int bond; 
 				private final int FULL_RECT_LEN = 250;
 				private final int SINGLE_CELL_LEN = FULL_RECT_LEN/10;

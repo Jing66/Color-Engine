@@ -64,7 +64,6 @@ public class DataProcess {
 	}
 	
 	/***********Get expectation[0] and Actual[1]  value of an indicator ****************************/
-	
 	/**
 	 * Returns the expectation data or real-time data of given securities 
 	 * @param  indicator the securities to get field
@@ -125,8 +124,6 @@ public class DataProcess {
 			 int numItems = securityDataArray.numValues();
 			 for (int i = 0; i < numItems; ++i) {
 				 Element securityData = securityDataArray.getValueAsElement(i);
-				 String security = securityData.getElementAsString(
-				 "security");
 				 Element fieldData =securityData.getElement("fieldData");
 				 //String NAME = fieldData.getElementAsString(" NAME");
 				 double exp = fieldData.getElementAsFloat64(" RT_BN_SURVEY_MEDIAN");
@@ -222,7 +219,7 @@ public class DataProcess {
 		return names;
 	}
 
-	/*********** TESTING ****************************/
+	
 	/*********** TESTING 
 	 * @throws Exception ****************************/
 	public static void main(String[] args) throws Exception{
