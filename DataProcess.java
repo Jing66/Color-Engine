@@ -64,6 +64,13 @@ public class DataProcess {
 	}
 	
 	/***********Get expectation[0] and Actual[1]  value of an indicator ****************************/
+	
+	/**
+	 * Returns the expectation data or real-time data of given securities 
+	 * @param  indicator the securities to get field
+	 * @param  field  which field to return. 0: expected value. 1: real-time data.
+	 * @return      data to return
+	 */
 	//return 0 if data not ready
 	public static double getBMG(String indicator, int field) throws Exception {
 		double output = 0;
@@ -144,6 +151,11 @@ public class DataProcess {
 	 
 	 
 	 /***********Get Names of an ArrayList of indicators ****************************/
+	 /**
+		 * Returns the names of a list of given securities 
+		 * @param  securities the list of securities to get names
+		 * @return      the list of names parsed from the message
+		 */
 	 public static ArrayList<String> getNames(ArrayList<String> securities) throws Exception{
 		 ArrayList<String> names = new ArrayList<String>();
 		 SessionOptions sessionOptions = new SessionOptions();
@@ -186,6 +198,7 @@ public class DataProcess {
 		 
 		 return names;
 	 }
+	 
 	 
 	private static ArrayList<String> handleNameResponseEvent(Event event) {
 		ArrayList<String> names = new ArrayList<String>();

@@ -42,6 +42,11 @@ public class ColorChoice extends JFrame implements ActionListener{
 
 	/**
 	 * Create the frame.
+	 * <p>
+	 * Go through database to get all the available indicators and list
+	 * them on the frame. Generate corresponding choices of fields (BOND
+	 * : high = buy; INVERSE: high = sell) and remember user's choices
+	 * generate new frames according to user's choice
 	 */
 	public ColorChoice() {
 		//++++++++++++Add ScrollPanel+++++++++++++++++++		
@@ -135,6 +140,14 @@ public class ColorChoice extends JFrame implements ActionListener{
 	
 	
 //#########################GO TO NEXT PANEL#################################	
+	/**
+	 * Respond to the choices of an indicator and its corresponding field
+	 * <p>
+	 * When user chooses an indicator, click on the checkbox or radiobox, 
+	 * record user's choice so that it can be passed as argument into next
+	 * step
+	 * @param  e Click of some button
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
@@ -152,7 +165,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 					e1.printStackTrace();
 				}	
 				bar.setVisible(true);
-				System.out.println("Selected:"+selected);	//Print Selected
+System.out.println("Selected:"+selected);	//Print Selected
 			}
 		}
 		
@@ -185,11 +198,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 	}
 
 	
-	/**
-	 * Returns the corresponding security when given the NAME field of it 
-	 * @param  name the NAME field of the security
-	 * @return      the image at the specified URL
-	 */
+	
 	private String getSecurity(String name) {
 		int i = securities.indexOf(name);
 		return securitiesIndex.get(i);

@@ -28,7 +28,8 @@ import javax.swing.border.EmptyBorder;
 public class Bars extends JFrame {
 
 	private JPanel contentPane;
-	public ArrayList<String> securities = new ArrayList<String>();
+	public ArrayList<String> securities = new ArrayList<String>();	//A list of what's shown on this panel, in order
+	
 	/**
 	 * Launch the application.
 	 */
@@ -50,10 +51,7 @@ public class Bars extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 * @throws Exception 
-	 */
+	
 //	
 //	public Bars() {
 //		setTitle("Bars Test");
@@ -66,6 +64,11 @@ public class Bars extends JFrame {
 //		setContentPane(contentPane);		
 //	}
 //	
+	/**
+	 * Create the frame.
+	 * @throws Exception 
+	 * @param  choices  Hashtable that contains all the information by users' choice
+	 */
 	public Bars(Hashtable<String,Integer> choices) throws Exception{
 		//++++++++++++++++++Layout++++++++++++++++++++++++++++++++
 		setTitle("Bars Ready");
