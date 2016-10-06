@@ -36,9 +36,13 @@ public class TestPane extends JFrame  {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					TestPane frame = new TestPane();
+					TestPane frame = new TestPane(1);
 					frame.setVisible(true);
-					//frame.pack();
+					System.out.println("main execute");
+					Thread.sleep(1000);
+					//frame.setVisible(false);
+					TestPane newFrame = new TestPane(2);
+					newFrame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -48,68 +52,46 @@ public class TestPane extends JFrame  {
 
 	/**
 	 * Create the frame.
+	 * @throws InterruptedException 
 	 */
-	public TestPane() {
+	public TestPane(int order) throws InterruptedException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 600);
-		contentPane = new JPanel();
-		//contentPane.setBorder(new EmptyBorder(new Insets(150, 200, 150, 200)));
+		contentPane = new JPanel();		
 		//+++++++++++++++++++add BoxLayout+++++++++++++++++
 		BoxLayout boxlayout = new BoxLayout(contentPane, BoxLayout.Y_AXIS);  //Y_AXIS: vertical
 		contentPane.setLayout(boxlayout);
-		
-		//+++++++++++++++++++add GridBagLayout+++++++++++++++
-/*		contentPane.setLayout(new GridBagLayout());
-		GridBagConstraints left = new GridBagConstraints();
-		left.anchor = GridBagConstraints.WEST;
-        left.weightx = 3.0;
-        GridBagConstraints right = new GridBagConstraints();
-        right.weightx = 3.0;
-        right.fill = GridBagConstraints.HORIZONTAL;
-        right.gridwidth = GridBagConstraints.REMAINDER;
-        
-        GridBagConstraints middle = new GridBagConstraints();
-        middle.weightx = 3.0;
-*/
-		//+++++++++++++++++++++Label and buttons++++++++++++++++++
-		JLabel label1 = new JLabel("111111111111111111111111111111");
-		label1.setAlignmentX(Component.CENTER_ALIGNMENT); //set label1 into center
-		JLabel label2 = new JLabel("22");
-		JLabel label3 = new JLabel("3333333");
-		JButton button1 = new JButton("1");
-		button1.setAlignmentX(Component.CENTER_ALIGNMENT); 
-		contentPane.add(label1);
-		contentPane.add(Box.createRigidArea(new Dimension(0, 10))); //Create space between 2 components
-		contentPane.add(label2);
-		contentPane.add(label3);
-		//contentPane.add(Box.createHorizontalGlue());  //Another way to create space
-		contentPane.add(button1);
-		
-		contentPane.add(new JLabel("NFP"));
-		RectDraw rect = new RectDraw();
-		//QUESTION: how to add listener?????
-		
-		contentPane.add(rect);
-		contentPane.add(new JLabel("ISM"));	//NOTE: it's far away.
-		
-		
-		
-		//++++++++++++++++++++++++++Scroll panel++++++++++++++++++++
-		JScrollPane scrollPane = new JScrollPane(contentPane);
-		setContentPane(scrollPane);
-	}
-	
-	/***********************Events Listener***********************/
-	class BooleanListener implements ChangeListener{
-
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			// TODO Auto-generated method stub
-			
+		if(order == 1){	
+			JLabel label1 = new JLabel("111111111111111111111111111111");
+			label1.setAlignmentX(Component.CENTER_ALIGNMENT); //set label1 into center
+			JLabel label2 = new JLabel("22");
+			JLabel label3 = new JLabel("3333333");
+			JButton button1 = new JButton("1");
+			button1.setAlignmentX(Component.CENTER_ALIGNMENT); 
+			contentPane.add(label1);
+			contentPane.add(Box.createRigidArea(new Dimension(0, 10))); //Create space between 2 components
+			contentPane.add(label2);
+			contentPane.add(label3);
+			//contentPane.add(Box.createHorizontalGlue());  //Another way to create space
+			contentPane.add(button1);
+			contentPane.add(new JLabel("NFP"));	
+			//draw rectangle
+			RectDraw rect = new RectDraw();
+			contentPane.add(rect);
+			setContentPane(contentPane);
+			System.out.print("Start to generate stuff");
 		}
-		
+		//+++++++++++++++++++++Label and buttons++++++++++++++++++
+		else{
+			System.out.println("start to generate new stuff");
+			//Thread.sleep(2000);
+			RectFill fill = new RectFill();
+			contentPane.add(fill);
+			setContentPane(contentPane);
+		}
 	}
 	
+	//++++++++++++++++++++++++++Draw Rectangle++++++++++++++++++++
 	private static class RectDraw extends JPanel {
         public void paintComponent(Graphics g) {
         super.paintComponent(g);  
@@ -129,27 +111,20 @@ public class TestPane extends JFrame  {
         g.setColor(Color.BLACK);
         
         //Test Transparency
-        Graphics2D g2d = (Graphics2D)g;
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) 0.5));
-        g.fillRect(350, 10, 65, 30);
- /*      
-        //Event on certain rectangle
-        Rectangle box = new Rectangle(5,10,20,30);
-        Graphics2D g2 = (Graphics2D)g;
-        g2.draw(box);
-        
-        //Simulate a change in data
-        boolean change = false;
-        try {
-			Thread.sleep(2000);
-			change = true;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-        
-        if(change) {g.fillRect(5,10,20,30); g.drawString("TestNumber", 350, 25);}
-        */
+//        Graphics2D g2d = (Graphics2D)g;
+//        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) 0.5));
+//        g.fillRect(350, 10, 65, 30);
+ 
         } 
      }
+	
+	//++++++++++++++++++++Fill colors++++++++++++++++++++
+	private class RectFill extends JPanel{
+		 public void paintComponent(Graphics g){
+			 super.paintComponent(g);  
+			 g.drawRect(100,50,100,20);
+			 g.fillRect(130,50,300,20);
+		 }
+	}
 
 }

@@ -40,10 +40,12 @@ public class Bars extends JFrame {
 					Hashtable<String,Integer> test = new Hashtable<String,Integer>();
 					test.put("a",0);
 					test.put("aaaaaaaaa",1);
-					//test.put("b",0);test.put("ccccccc",0);test.put("dddd",0);test.put("e",0);test.put("f",0);
+					
 					Bars frame = new Bars(test);
-					//frame.pack();
 					frame.setVisible(true);
+					//TODO: generate a new Frame after the data come out
+					Bars newFrame = new Bars(test);
+					newFrame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -52,19 +54,7 @@ public class Bars extends JFrame {
 	}
 
 	
-//	
-//	public Bars() {
-//		setTitle("Bars Test");
-//		
-//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		setBounds(100, 100, 750, 600);
-//		contentPane = new JPanel();
-//		contentPane.setBorder(new EmptyBorder(8, 10, 8, 10));
-//		contentPane.setLayout(new BorderLayout(5, 10));
-//		setContentPane(contentPane);		
-//	}
-//	
-	/**
+/**
 	 * Create the frame.
 	 * @throws Exception 
 	 * @param  choices  Hashtable that contains all the information by users' choice
@@ -89,7 +79,7 @@ public class Bars extends JFrame {
 			count++;
 			String i = keys.nextElement();	//NOTE: i is indicator security name
 			securities.add(i);
-			RectDraw rect = new RectDraw(i,count,choices.get(i));
+			RectDraw rect = new RectDraw(i);
 			//*************Add Expectation value and VAR**************
 			double exp = DataProcess.getBMG(i, 0);
 			double var = DataProcess.getVar(i);
@@ -107,6 +97,7 @@ public class Bars extends JFrame {
 		//++++++++++++++++++Loop to Fill Colors++++++++++++++++++++++
 		
 		//----------NOTE: May need to draw the Rectangles again--------
+		//----------NOTE: THIS IS WRONG! Do it in <main> (ColorChoice)--------
 		getContentPane().remove(contentPane);
 		JPanel newPane = new JPanel();
 		newPane.setBorder(new EmptyBorder(8, 10, 8, 10));
@@ -121,14 +112,14 @@ public class Bars extends JFrame {
 		
 	}
 	
-	/**********************Draw Rectangle***********************/
+	/**********************Draw Rectangles***********************/
 	private class RectDraw extends JPanel{
 		//BOND = 0; INVERSE = 1;
 		private final int FULL_RECT_LEN = 250;
 		private final int MIDDLE_RECT_LEN = 150;
 		
 		//Constructor
-		public RectDraw(String name, int order, int bond){
+		public RectDraw(String name){
 			setPreferredSize(new Dimension(600,20));
 			setLayout(new FlowLayout());
 		}
@@ -148,7 +139,7 @@ public class Bars extends JFrame {
 	}
 	
 	/**********************Fill Color***********************/
-	private class RectFill extends JPanel{
+	private class RectFill extends RectDraw{
 		//BOND = 0; INVERSE = 1;
 				private String name;	//Index of security
 				private int bond; 
@@ -158,6 +149,7 @@ public class Bars extends JFrame {
 				
 		//Constructor
 				public RectFill(String name, int bond){
+					super(name);
 					setPreferredSize(new Dimension(600,20));
 					setLayout(new FlowLayout());
 					this.name = name;

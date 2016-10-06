@@ -166,6 +166,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 				}	
 				bar.setVisible(true);
 System.out.println("Selected:"+selected);	//Print Selected
+				//----------WAIT for colors here-------------
 			}
 		}
 		
