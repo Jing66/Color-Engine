@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -13,6 +14,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
+import java.util.EventListener;
+import java.util.EventObject;
+import java.util.Hashtable;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -29,6 +33,8 @@ public class TestPane extends JFrame  {
 
 	private JPanel contentPane;
 	private Rectangle box;
+	protected EventListener myListener;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -36,13 +42,38 @@ public class TestPane extends JFrame  {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					TestPane frame = new TestPane(1);
+					TestPane frame = new TestPane();
 					frame.setVisible(true);
 					System.out.println("main execute");
-					Thread.sleep(1000);
-					//frame.setVisible(false);
-					TestPane newFrame = new TestPane(2);
-					newFrame.setVisible(true);
+/*					Thread.sleep(5000);
+					frame.setVisible(false);
+					Hashtable<String,Integer> test = new Hashtable<String,Integer>();
+					test.put("a",0);
+					test.put("aaaaaaaaa",1);
+					
+					Bars newframe = new Bars(test);
+					newframe.setVisible(true);
+*/
+					frame.addMyEventListener(new TestListener(){
+
+						@Override
+						public void fillRect(Event e) {
+							// TODO Auto-generated method stub
+							System.out.print("\n event fired");
+							Hashtable<String,Integer> test = new Hashtable<String,Integer>();
+							test.put("a",0);
+							test.put("aaaaaaaaa",1);
+							
+							Bars newframe = null;
+							try {
+								newframe = new Bars(test);
+							} catch (Exception e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							newframe.setVisible(true);
+						};
+					});
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -54,14 +85,14 @@ public class TestPane extends JFrame  {
 	 * Create the frame.
 	 * @throws InterruptedException 
 	 */
-	public TestPane(int order) throws InterruptedException {
+	public TestPane() throws InterruptedException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 600);
 		contentPane = new JPanel();		
 		//+++++++++++++++++++add BoxLayout+++++++++++++++++
 		BoxLayout boxlayout = new BoxLayout(contentPane, BoxLayout.Y_AXIS);  //Y_AXIS: vertical
 		contentPane.setLayout(boxlayout);
-		if(order == 1){	
+		
 			JLabel label1 = new JLabel("111111111111111111111111111111");
 			label1.setAlignmentX(Component.CENTER_ALIGNMENT); //set label1 into center
 			JLabel label2 = new JLabel("22");
@@ -80,15 +111,11 @@ public class TestPane extends JFrame  {
 			contentPane.add(rect);
 			setContentPane(contentPane);
 			System.out.print("Start to generate stuff");
-		}
+			
+			
 		//+++++++++++++++++++++Label and buttons++++++++++++++++++
-		else{
-			System.out.println("start to generate new stuff");
-			//Thread.sleep(2000);
-			RectFill fill = new RectFill();
-			contentPane.add(fill);
-			setContentPane(contentPane);
-		}
+		
+			
 	}
 	
 	//++++++++++++++++++++++++++Draw Rectangle++++++++++++++++++++
@@ -126,5 +153,27 @@ public class TestPane extends JFrame  {
 			 g.fillRect(130,50,300,20);
 		 }
 	}
+	
+/******************Test for event listener*****************/
+	interface TestListener extends EventListener{
+		public void fillRect(Event e);
+	}
+	
+	class MyEvent extends EventObject{
+		public MyEvent(Object source){
+			super(source);
+		}
+	}
 
+	void fillRect(MyEvent e){
+		System.out.println("start to generate new stuff");
+		//Thread.sleep(2000);
+		RectFill fill = new RectFill();
+		contentPane.add(fill);
+		setContentPane(contentPane);
+	}
+	
+	public void addMyEventListener(TestListener e){
+		myListener = e;
+	}
 }
