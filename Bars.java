@@ -12,9 +12,11 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import javax.swing.JLabel;
 
@@ -29,7 +31,7 @@ public class Bars extends JFrame {
 
 	private JPanel contentPane;
 	public ArrayList<String> securities = new ArrayList<String>();	//A list of what's shown on this panel, in order. It's SECURITY not NAME
-	
+	private List _listeners = new ArrayList();
 	/**
 	 * Launch the application.
 	 */
@@ -224,5 +226,24 @@ public class Bars extends JFrame {
 				
 				}
 		}
+
+	synchronized void addEventListener(myListener listener){
+		_listeners.add(listener);
+	}
+	
+	synchronized void removeEventListener(myListener listener){
+		_listeners.remove(listener);
+	}
+	
+	synchronized void fireEvent(){
+		DataProcess data = new DataProcess(this);
+		Iterator i = _listeners.iterator();
+		while (i.hasNext()){
+			((myListener) i.next()).handleEvent(data);
+		}
+	}
+	
+	
+	
 }
 

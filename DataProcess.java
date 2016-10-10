@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EventObject;
 
 /**
  * process data: get Var from excel, get expectation from Bloomberg, get real-time data from 
@@ -23,10 +24,11 @@ import java.util.ArrayList;
  */
 
 
-public class DataProcess {
+public class DataProcess extends EventObject {
 
-	public DataProcess() {
+	public DataProcess(Object source) {
 	// TODO Auto-generated constructor stub
+		super(source);
 	}
 
 	/************Read variable from the H4 cell********/

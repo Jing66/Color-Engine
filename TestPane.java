@@ -14,6 +14,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.EventListener;
 import java.util.EventObject;
 import java.util.Hashtable;
@@ -111,7 +113,15 @@ public class TestPane extends JFrame  {
 			contentPane.add(rect);
 			setContentPane(contentPane);
 			System.out.print("Start to generate stuff");
-			
+			button1.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					RectFill fill = new RectFill();
+					System.out.print("\n fill rectan");
+					contentPane.add(fill);
+				}
+			});
 			
 		//+++++++++++++++++++++Label and buttons++++++++++++++++++
 		
@@ -159,18 +169,15 @@ public class TestPane extends JFrame  {
 		public void fillRect(Event e);
 	}
 	
-	class MyEvent extends EventObject{
+	private class MyEvent extends EventObject{
 		public MyEvent(Object source){
 			super(source);
 		}
 	}
 
-	void fillRect(MyEvent e){
-		System.out.println("start to generate new stuff");
-		//Thread.sleep(2000);
-		RectFill fill = new RectFill();
-		contentPane.add(fill);
-		setContentPane(contentPane);
+	void fireFillRect(MyEvent e){
+		System.out.println("\n fire an event to all");
+		MyEvent event = new MyEvent(e);
 	}
 	
 	public void addMyEventListener(TestListener e){
