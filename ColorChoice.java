@@ -12,6 +12,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import colors.Bars.MyEventListener;
+
 
 public class ColorChoice extends JFrame implements ActionListener{
 	
@@ -161,6 +163,8 @@ public class ColorChoice extends JFrame implements ActionListener{
 				Bars bar = null;
 				try {
 					bar = new Bars(selected);
+					MyEventListener l = new MyEventListener();
+					bar.addEventListener(l);
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

@@ -25,11 +25,15 @@ import java.util.EventObject;
 
 
 public class DataProcess extends EventObject {
-
-	public DataProcess(Object source) {
+	private Data data;
+	
+	public DataProcess(Object source, Data data) {
 	// TODO Auto-generated constructor stub
 		super(source);
+		this.data = data;
 	}
+	
+	
 
 	/************Read variable from the H4 cell********/
 	public static double getVar(String fileName){
@@ -234,5 +238,15 @@ public class DataProcess extends EventObject {
 		test.add("NHSPATOT Index");
 		//add more securities here
 		System.out.print(DataProcess.getNames(test));
+	}
+
+	public class Data{
+		private String indicator;
+		private double exp=0;
+		private double actual=0;
+		
+		public Data(String indicator){
+			this.indicator = indicator;
+		}
 	}
 }

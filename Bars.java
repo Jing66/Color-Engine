@@ -168,6 +168,9 @@ public class Bars extends JFrame {
 					double realData = 0;
 					try {
 						realData = DataProcess.getBMG(name,1);
+						if(realData != 0 ){
+							fireEvent();
+						}
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
