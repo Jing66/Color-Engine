@@ -8,7 +8,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import javax.swing.JPanel;
 
 public class RectFill extends RectDraw{
 	//BOND = 0; INVERSE = 1;
@@ -50,6 +49,7 @@ public class RectFill extends RectDraw{
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					System.out.print("\n============ERROR GETTING EXP=============");
 				}
 				double mVar =  var/(realData - exp);
 				//While get Actual data

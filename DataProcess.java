@@ -28,8 +28,6 @@ import com.bloomberglp.blpapi.SessionOptions;
  * @author liujingyun
  *
  */
-
-
 public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	private JFrame bar;
 	private Hashtable<String,Integer> indicators = new Hashtable<String,Integer>();
@@ -277,7 +275,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 			actuals = get();
 		}
 		catch(Exception e){
-			System.out.print("\n==========CANNOT GET BMG ACTUALS==========\n");
+			System.out.print("\n==========CANNOT GET BMG ACTUALS FROM DoInBackground==========\n");
 			e.printStackTrace();
 		}
 		//fill colors
@@ -285,7 +283,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 			RectFill rectColor =new RectFill(securities.get(i), indicators.get(i),actuals.get(i));
 			contentPane.add(rectColor);
 		}
-		//remove empty bars
+		//remove empty rectangles and update new colored rectangles
 		Component[] comp = contentPane.getComponents();
 		for (int i = 0; i<comp.length;i++){
 			System.out.print(comp[i].getClass().getName()+"\n");

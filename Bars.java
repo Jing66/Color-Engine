@@ -74,9 +74,9 @@ public class Bars extends JFrame {
 		
 		//++++++++++++++++++Loop to Draw Rectangles, Given Indicator security name++++++++++++++
 		Enumeration<String> keys = choices.keys();
-		int count = 0;
+	
 		while (keys.hasMoreElements()){
-			count++;
+	
 			String i = keys.nextElement();	//NOTE: i is indicator security name
 			securities.add(i);
 			RectDraw rect = new RectDraw(i);
