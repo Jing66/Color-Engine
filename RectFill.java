@@ -14,17 +14,18 @@ public class RectFill extends RectDraw{
 	//BOND = 0; INVERSE = 1;
 			private String name;	//Index of security
 			private int bond; 
+			private double actual;
 			private final int FULL_RECT_LEN = 250;
 			private final int SINGLE_CELL_LEN = FULL_RECT_LEN/10;
 			private final int MIDDLE_RECT_LEN = 150;
 			
 	//Constructor
-			public RectFill(String name, int bond){
+			public RectFill(String name, int bond, double actual){
 				super(name);
 				setPreferredSize(new Dimension(600,20));
 				setLayout(new FlowLayout());
 				this.name = name;
-				
+				this.actual = actual;
 				this.bond = bond;
 			}
 			
@@ -32,15 +33,16 @@ public class RectFill extends RectDraw{
 			public void paintComponent(Graphics g){
 				super.paintComponent(g);  
 				int middleX = 100;
+				int countBox = 0;
+				int startX = 50;
+				while (startX<=FULL_RECT_LEN*6+MIDDLE_RECT_LEN){	
+					if(countBox == 3){middleX = startX+MIDDLE_RECT_LEN/2;g.drawRect(startX,5,MIDDLE_RECT_LEN,30);startX+=MIDDLE_RECT_LEN;countBox++;continue;}
+					g.drawRect(startX,5,FULL_RECT_LEN,30);
+			       	startX+=FULL_RECT_LEN;countBox++;
+			    }
+				//**************TODO:MODIFY: Get Real Data***************
+				double realData = actual;
 				
-				//**************TODO: Get Real Data***************
-				double realData = 0;
-				try {
-					realData = DataProcess.getBMG(name,1);
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 				double var = DataProcess.getVar(name);
 				double exp = 0;
 				try {

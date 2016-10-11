@@ -94,7 +94,7 @@ public class Bars extends JFrame {
 			securities.add(i);		//add security String for next loop calling getActual
 		}
 		
-		//++++++++++++++++++Loop to Fill Colors++++++++++++++++++++++
+/*		//++++++++++++++++++Loop to Fill Colors++++++++++++++++++++++
 		
 		//----------NOTE: May need to draw the Rectangles again--------
 		//----------NOTE: THIS IS WRONG! Do it in <main> (ColorChoice)--------
@@ -109,7 +109,7 @@ public class Bars extends JFrame {
 			RectFill bar = new RectFill(security, choices.get(security));
 			newPane.add(bar);
 		}
-		
+*/		
 	}
 	
 	

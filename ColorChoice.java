@@ -158,15 +158,18 @@ public class ColorChoice extends JFrame implements ActionListener{
 			String label = o.getText();
 			if(label.equals( "GO")){
 				Bars bar = null;
+				
 				try {
 					bar = new Bars(selected);
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}	
+					System.out.print("\n==========ERROR generating BARS============");
+				}
+				
 				bar.setVisible(true);
-System.out.println("Selected:"+selected);	//Print Selected
-				//----------WAIT for colors here-------------
+				//----------------WAIT for BACKGROUND colors here--------------------
+				DataProcess data = new DataProcess(selected,bar);
+				data.execute();
 			}
 		}
 		

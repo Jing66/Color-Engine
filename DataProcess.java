@@ -1,5 +1,6 @@
 package colors;
 
+import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -9,6 +10,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
 import com.bloomberglp.blpapi.Element;
@@ -269,6 +271,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	
 	@Override
 	protected void done(){
+		JPanel contentPane = (JPanel) bar.getContentPane();
 		//get actuals order same with securities
 		try{
 			actuals = get();
@@ -279,9 +282,20 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		}
 		//fill colors
 		for(int i=0;i<securities.size();i++){
-			RectFill rectColor =new RectFill(securities.get(i), indicators.get(i));
-			bar.getContentPane().add(rectColor);
+			RectFill rectColor =new RectFill(securities.get(i), indicators.get(i),actuals.get(i));
+			contentPane.add(rectColor);
 		}
+		//remove empty bars
+		Component[] comp = contentPane.getComponents();
+		for (int i = 0; i<comp.length;i++){
+			System.out.print(comp[i].getClass().getName()+"\n");
+			if(comp[i].getClass().getName().toString().equals("colors.Bars$RectDraw") ){
+				contentPane.remove(comp[i]);
+				System.out.print("REMOVED!");
+						
+			}
+		}
+		contentPane.revalidate();
 		
 	}
 	
