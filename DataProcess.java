@@ -1,5 +1,16 @@
 package colors;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+import javax.swing.JFrame;
+import javax.swing.SwingWorker;
+
 import com.bloomberglp.blpapi.Element;
 import com.bloomberglp.blpapi.Event;
 import com.bloomberglp.blpapi.Message;
@@ -9,12 +20,6 @@ import com.bloomberglp.blpapi.Service;
 import com.bloomberglp.blpapi.Session;
 import com.bloomberglp.blpapi.SessionOptions;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-
 /**
  * process data: get Var from excel, get expectation from Bloomberg, get real-time data from 
  * 	Bloomberg
@@ -23,10 +28,16 @@ import java.util.ArrayList;
  */
 
 
-public class DataProcess {
-
-	public DataProcess() {
+public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
+	private JFrame bar;
+	private Hashtable<String,Integer> indicators = new Hashtable<String,Integer>();
+	ArrayList<Double> actuals = new ArrayList<Double>();
+	public ArrayList<String> securities = new ArrayList<String>();
+	
+	public DataProcess(Hashtable<String,Integer> indicators, JFrame bar) {
 	// TODO Auto-generated constructor stub
+		this.indicators = indicators;
+		this.bar = bar;
 	}
 
 	/************Read variable from the H4 cell********/
@@ -233,4 +244,46 @@ public class DataProcess {
 		//add more securities here
 		System.out.print(DataProcess.getNames(test));
 	}
+
+	@Override
+	protected ArrayList<Double> doInBackground() throws Exception {
+		// TODO Auto-generated method stub
+		ArrayList<Double> output = new ArrayList<Double>();
+		Enumeration<String> keys = indicators.keys();
+		while (keys.hasMoreElements()){;
+			String i = keys.nextElement();	//NOTE: i is indicator security name
+			securities.add(i);
+		}
+		//get the actual of each indicator
+		while(true){
+			double actual =  getBMG(securities.get(0),1);
+			if(actual !=0) break;
+		}
+		
+		for (int i =0; i < indicators.size();i++){
+			double actual = getBMG(securities.get(i),1);
+			output.add(i, actual);
+		}
+		return output;
+	}
+	
+	@Override
+	protected void done(){
+		//get actuals order same with securities
+		try{
+			actuals = get();
+		}
+		catch(Exception e){
+			System.out.print("\n==========CANNOT GET BMG ACTUALS==========\n");
+			e.printStackTrace();
+		}
+		//fill colors
+		for(int i=0;i<securities.size();i++){
+			RectFill rectColor =new RectFill(securities.get(i), indicators.get(i));
+			bar.getContentPane().add(rectColor);
+		}
+		
+	}
+	
+	
 }
