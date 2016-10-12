@@ -45,35 +45,6 @@ public class TestPane extends JFrame  {
 					TestPane frame = new TestPane();
 					frame.setVisible(true);
 					System.out.println("main execute");
-/*					Thread.sleep(5000);
-					frame.setVisible(false);
-					Hashtable<String,Integer> test = new Hashtable<String,Integer>();
-					test.put("a",0);
-					test.put("aaaaaaaaa",1);
-					
-					Bars newframe = new Bars(test);
-					newframe.setVisible(true);
-*/
-					frame.addMyEventListener(new TestListener(){
-
-						@Override
-						public void fillRect(Event e) {
-							// TODO Auto-generated method stub
-							System.out.print("\n event fired");
-							Hashtable<String,Integer> test = new Hashtable<String,Integer>();
-							test.put("a",0);
-							test.put("aaaaaaaaa",1);
-							
-							Bars newframe = null;
-							try {
-								newframe = new Bars(test);
-							} catch (Exception e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-							newframe.setVisible(true);
-						};
-					});
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -109,8 +80,20 @@ public class TestPane extends JFrame  {
 			//draw rectangle
 			RectDraw rect = new RectDraw();
 			contentPane.add(rect);
+			RectFill rectFill = new RectFill();
+			contentPane.add(rectFill);
 			setContentPane(contentPane);
-			System.out.print("Start to generate stuff");
+			System.out.print("Start to generate stuff:\n");
+			Component[] comp = contentPane.getComponents();
+			for (int i = 0; i<comp.length;i++){
+				System.out.print(comp[i].getClass().getName()+"\n");
+				if(comp[i].getClass().getName().toString().equals("colors.TestPane$RectDraw") ){
+					contentPane.remove(comp[i]);
+					System.out.print("REMOVED!");
+							
+				}
+			}
+			contentPane.revalidate();
 			
 			
 		//+++++++++++++++++++++Label and buttons++++++++++++++++++
@@ -121,7 +104,7 @@ public class TestPane extends JFrame  {
 	//++++++++++++++++++++++++++Draw Rectangle++++++++++++++++++++
 	private static class RectDraw extends JPanel {
         public void paintComponent(Graphics g) {
-        super.paintComponent(g);  
+        //super.paintComponent(g);  
         
 /*         g.drawRect(100,50,100,20);  	//args: (距离左边，距离上面,length,width)  
          //g.fillRect(130,50,300,20);  //fill it
@@ -148,7 +131,7 @@ public class TestPane extends JFrame  {
 	//++++++++++++++++++++Fill colors++++++++++++++++++++
 	private class RectFill extends JPanel{
 		 public void paintComponent(Graphics g){
-			 super.paintComponent(g);  
+			super.paintComponent(g);  
 			 g.drawRect(100,50,100,20);
 			 g.fillRect(130,50,300,20);
 		 }

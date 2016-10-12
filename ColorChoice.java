@@ -87,6 +87,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			System.out.print("\n===============ERROR GETTING SECURITY NAMES============");
 		}
 		//Show the names to the users to choose
 		//NOTE: When pass to bars, pass security name not NAME field
@@ -158,15 +159,18 @@ public class ColorChoice extends JFrame implements ActionListener{
 			String label = o.getText();
 			if(label.equals( "GO")){
 				Bars bar = null;
+				
 				try {
 					bar = new Bars(selected);
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}	
+					System.out.print("\n==========ERROR generating BARS============");
+				}
+				
 				bar.setVisible(true);
-System.out.println("Selected:"+selected);	//Print Selected
-				//----------WAIT for colors here-------------
+				//----------------Start BACKGROUND Process here--------------------
+				DataProcess data = new DataProcess(selected,bar);
+				data.execute();
 			}
 		}
 		
@@ -174,7 +178,7 @@ System.out.println("Selected:"+selected);	//Print Selected
 		if(source instanceof JRadioButton){
 			JRadioButton o = (JRadioButton)source;
 			String commandFull = o.getActionCommand();
-			//--------------NOTE: change NAME to security-----------------
+			//--------------NOTE: change NAME to INDEX-----------------
 			String item = getSecurity(commandFull.split("=")[0]);	
 			
 			String command = commandFull.split("=")[1];
@@ -186,7 +190,7 @@ System.out.println("Selected:"+selected);	//Print Selected
 		if (source instanceof JCheckBox){
 			AbstractButton box = (AbstractButton) e.getSource();
 			if (box.isSelected()){
-				//--------------NOTE: change NAME to security-----------------
+				//--------------NOTE: change NAME to INDEX-----------------
 				String label = getSecurity(box.getName());
 				if(!selected.contains(label)) selected.put(label,0);
 			}
