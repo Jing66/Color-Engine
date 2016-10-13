@@ -38,7 +38,7 @@ public class TestPane extends JFrame implements ActionListener {
 	private Rectangle box;
 	//protected EventListener myListener;
 	
-	private JTextField expText;
+	RectDraw rect;
 	/**
 	 * Launch the application.
 	 */
@@ -73,6 +73,7 @@ public class TestPane extends JFrame implements ActionListener {
 			JLabel label2 = new JLabel("22");
 			JLabel label3 = new JLabel("3333333");
 			JButton button1 = new JButton("1");
+			button1.addActionListener(this);
 			button1.setAlignmentX(Component.CENTER_ALIGNMENT); 
 			contentPane.add(label1);
 			contentPane.add(Box.createRigidArea(new Dimension(0, 10))); //Create space between 2 components
@@ -82,10 +83,11 @@ public class TestPane extends JFrame implements ActionListener {
 			contentPane.add(button1);
 			contentPane.add(new JLabel("NFP"));	
 			//draw rectangle
-			RectDraw rect = new RectDraw();
+			rect = new RectDraw();
 			contentPane.add(rect);
-			RectFill rectFill = new RectFill();
-			contentPane.add(rectFill);
+			
+/*			RectFill rectFill = new RectFill();
+			contentPane.add(rectFill);*/
 			setContentPane(contentPane);
 	//Re-generate graph test
 /*			System.out.print("Start to generate stuff:\n");
@@ -101,10 +103,11 @@ public class TestPane extends JFrame implements ActionListener {
 			contentPane.revalidate();
 */
 	//Editable textField and listener test
-			double exp = 14.5;
+/*			double exp = 14.5;
 			expText = new JTextField(Double.toString(exp));
 			expText.addActionListener((ActionListener) this);
 			contentPane.add(expText);
+*/			
 			
 		//+++++++++++++++++++++Label and buttons++++++++++++++++++
 		
@@ -113,7 +116,8 @@ public class TestPane extends JFrame implements ActionListener {
 	
 	//++++++++++++++++++++++++++Draw Rectangle++++++++++++++++++++
 	private static class RectDraw extends JPanel {
-        public void paintComponent(Graphics g) {
+        boolean fill = false;
+		public void paintComponent(Graphics g) {
         //super.paintComponent(g);  
         
 /*         g.drawRect(100,50,100,20);  	//args: (距离左边，距离上面,length,width)  
@@ -130,23 +134,32 @@ public class TestPane extends JFrame implements ActionListener {
         g.drawString("150K", 350, 10);
         g.setColor(Color.BLACK);
         
+        if(fill){
+        	 g.drawRect(100,50,100,20);
+			 g.fillRect(130,50,300,20);
+        }
+        
         //Test Transparency
 //        Graphics2D g2d = (Graphics2D)g;
 //        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) 0.5));
 //        g.fillRect(350, 10, 65, 30);
  
         } 
+		public void setFill(boolean set){
+			fill = set;
+		}
+     
      }
 	
 	//++++++++++++++++++++Fill colors++++++++++++++++++++
-	private class RectFill extends JPanel{
+/*	private class RectFill extends JPanel{
 		 public void paintComponent(Graphics g){
 			super.paintComponent(g);  
 			 g.drawRect(100,50,100,20);
 			 g.fillRect(130,50,300,20);
 		 }
 	}
-	
+	*/
 /******************Test for event listener*****************
 	interface TestListener extends EventListener{
 		public void fillRect(Event e);
@@ -171,11 +184,13 @@ public class TestPane extends JFrame implements ActionListener {
 	}*/
 	
 	@Override
-	 public void actionPerformed(ActionEvent evt) {
-	    //get input in textfield when Enter is pressed 
-	    double newExp = Double.parseDouble(expText.getText());
-	    System.out.print(newExp+"\n");
-	      
-	      
+	 public void actionPerformed(ActionEvent e) {
+		Object source = e.getSource();
+		if (source instanceof JButton){
+			System.out.print("Button clicked\n");
+			rect.setFill(true);
+			this.revalidate();
+			rect.repaint();
+		}
 	   }
 }

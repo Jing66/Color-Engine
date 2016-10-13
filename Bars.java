@@ -79,7 +79,7 @@ public class Bars extends JFrame implements ActionListener {
 		for(int j=0;j<securitiesIndex.size();j++){
 			String i = securities.get(j);	//NOTE: i is NAME of security
 			securities.add(i);
-			RectDraw rect = new RectDraw(i);
+			RectDraw rect = new RectDraw(i, DataProcess.getExp(securitiesIndex.get(j)),100,0);	//!!!!!Constructor
 			//*************Add Expectation value and VAR JLabel**************
 			double exp = DataProcess.getExp(securitiesIndex.get(j));
 			double var = DataProcess.getVar(securitiesIndex.get(j));

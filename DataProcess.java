@@ -357,7 +357,7 @@ try{
 		}
 		//fill colors
 		for(int i=0;i<securities.size();i++){
-			RectFill rectColor =new RectFill(securities.get(i), indicators.get(i),200);	//!!!!!!!!hashtable.get!!
+			RectFill rectColor =new RectFill(securities.get(i), indicators.get(i),200.0,14.4);	//!!!!!!!!hashtable.get!!
 			contentPane.add(rectColor);
 		}
 		//remove empty rectangles and update new colored rectangles
