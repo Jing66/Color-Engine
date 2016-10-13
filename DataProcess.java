@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
+import com.bloomberglp.blpapi.CorrelationID;
 import com.bloomberglp.blpapi.Element;
 import com.bloomberglp.blpapi.Event;
 import com.bloomberglp.blpapi.Message;
@@ -21,6 +22,8 @@ import com.bloomberglp.blpapi.Request;
 import com.bloomberglp.blpapi.Service;
 import com.bloomberglp.blpapi.Session;
 import com.bloomberglp.blpapi.SessionOptions;
+import com.bloomberglp.blpapi.Subscription;
+import com.bloomberglp.blpapi.SubscriptionList;
 
 /**
  * process data: get Var from excel, get expectation from Bloomberg, get real-time data from 
@@ -33,11 +36,21 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	private Hashtable<String,Integer> indicators = new Hashtable<String,Integer>();
 	ArrayList<Double> actuals = new ArrayList<Double>();
 	public ArrayList<String> securities = new ArrayList<String>();
+	public ArrayList<String> securitiesIndex = new ArrayList<String>();
 	
 	public DataProcess(Hashtable<String,Integer> indicators, JFrame bar) {
 	// TODO Auto-generated constructor stub
 		this.indicators = indicators;
 		this.bar = bar;
+		try {
+			securitiesIndex = new ArrayList<String>(indicators.keySet());
+			securities = getNames(securitiesIndex);
+			System.out.println("CHOSEN SECURITIES NAMES:"+securities);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.print("================CANNOT CONSTRUCT DATAPROCESS==================");
+		}
 	}
 
 	/************Read variable from the H4 cell********/
@@ -47,7 +60,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	BufferedReader br = null; 
 	String line= " ";
 	try {
- 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\"+fileName;
+ 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\"+fileName+".csv";
  		br = new BufferedReader(new FileReader(fullPath));
            //======The data is located at 4th line last cell=====
    		line = br.readLine();
@@ -74,15 +87,13 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	return var;
 	}
 	
-	/***********Get expectation[0] and Actual[1]  value of an indicator ****************************/
+	/***********Get Expectation  value of an indicator ****************************/
 	/**
-	 * Returns the expectation data or real-time data of given securities 
+	 * Returns the Bloomberg survey data of given securities 
 	 * @param  indicator the securities to get field
-	 * @param  field  which field to return. 0: expected value. 1: real-time data.
 	 * @return      data to return
 	 */
-	//return 0 if data not ready
-	public static double getBMG(String indicator, int field) throws Exception {
+	public static double getExp(String indicator) throws Exception {
 		double output = 0;
 		SessionOptions sessionOptions = new SessionOptions();
  		sessionOptions.setServerHost("localhost");
@@ -100,7 +111,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
  		Service refDataSvc = session.getService("//blp/refdata");
 		 Request request = refDataSvc.createRequest("ReferenceDataRequest");
  		request.append("securities", indicator);
- 		//request.append("fields", "NAME");
+ 		request.append("fields", "NAME");
  		request.append("fields", "RT_BN_SURVEY_MEDIAN");
  		request.append("fields", "LAST_PRICE");
  		request.append("fields", "TIME");
@@ -112,7 +123,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
  		 	case Event.EventType.Constants.RESPONSE: // final event
  		 		continueToLoop = false; // fall through
  		 	case Event.EventType.Constants.PARTIAL_RESPONSE:
- 		 		output = handleResponseEvent(event, field);
+ 		 		output = handleResponseEvent(event);
  		 		break;
  		 	default:
  		 		//handleOtherEvent(event);
@@ -122,13 +133,13 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
  		return output;
 	}
 	
-	//return 0 if data is not ready
-	 private static double handleResponseEvent(Event event, int field) throws Exception {
+	 private static double handleResponseEvent(Event event) throws Exception {
 		 double output = 0;
 		
 		 MessageIterator iter = event.messageIterator();
 		 while (iter.hasNext()) {
 			 Message message = iter.next();
+			 System.out.print(message);
 			 Element ReferenceDataResponse = message.asElement();
 			 Element securityDataArray =  ReferenceDataResponse.getElement("securityData");
 			 //parse
@@ -137,23 +148,69 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 				 Element securityData = securityDataArray.getValueAsElement(i);
 				 Element fieldData =securityData.getElement("fieldData");
 				 //String NAME = fieldData.getElementAsString(" NAME");
-				 double exp = fieldData.getElementAsFloat64(" RT_BN_SURVEY_MEDIAN");
-				 double actual =fieldData.getElementAsFloat64("LAST_PRICE");
-				 String date = fieldData.getElementAsString("TIME");
-				  
-				 if(field==0){	//get Expectation
-					 output = exp;
-				 }
-				 else{		//get Actual
-					 if (date.contains(":")){	//if it's today's data
-						 output = actual;
-					 }
-				 }
+				 double exp = fieldData.getElementAsFloat64("RT_BN_SURVEY_MEDIAN");
+				 //double actual =fieldData.getElementAsFloat64("LAST_PRICE");
+				 output = exp; 
 			 }
 			 //message.print(System.out);
-			 
 		 	}
-		 
+			 return output;
+		 }
+	
+	/***********Get Actual value of an indicator ****************************/
+	/**
+	 * Returns the real-time data of given securities 
+	 * @param  indicator the securities to get field
+	 * @return      data to return
+	 */
+	//return 0 if data not ready
+	public static double getActual(String indicator) throws Exception {
+		double output = 0;
+		SessionOptions sessionOptions = new SessionOptions();
+		 sessionOptions.setServerHost("localhost");
+		 sessionOptions.setServerPort(8194);
+		 Session session = new Session(sessionOptions);
+		 if (!session.start()) {
+			 System.out.println("Could not start session.");
+			 System.exit(1);
+		 }
+		 if (!session.openService("//blp/mktdata")) {
+			 System.err.println("Could not start session.");
+			 System.exit(1);
+		 }
+		 CorrelationID subscriptionID = new CorrelationID(2);
+		 SubscriptionList subscriptions = new SubscriptionList();
+		 subscriptions.add(new Subscription(indicator,"LAST_PRICE",subscriptionID));
+		 session.subscribe(subscriptions);
+		 while (true) {
+			 Event event = session.nextEvent();
+			 switch (event.eventType().intValue()) {
+			 	case Event.EventType.Constants.SUBSCRIPTION_DATA:
+			 			output = handleDataEvent(event);
+			 			return output;
+			 	default:
+			 		break;
+			 	}
+		 }
+	}
+	
+	//return 0 if data is not ready
+	 private static double handleDataEvent(Event event) throws Exception {
+		 double output = 0;
+		
+		 MessageIterator iter = event.messageIterator();
+		 while (iter.hasNext()) {
+			 Message message = iter.next();
+			 System.out.print(message);
+			 Element ReferenceDataResponse = message.asElement();
+			 //parse
+			 double actual =ReferenceDataResponse.getElementAsFloat64("LAST_PRICE");
+			 String date = ReferenceDataResponse.getElementAsString("TIME");
+				if (date.contains(":")){	//if it's today's data
+					output = actual;
+				}
+//				System.out.print("====PARSED:=========\n"+"TIME= "+date+"\nactual=" + actual);
+			 }
 			 return output;
 		 }
 	 
@@ -171,7 +228,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	 		sessionOptions.setServerPort(8194);
 	 		Session session = new Session(sessionOptions);
 	 		if (!session.start()) {
-			 System.out.println("Could not start session.");
+			 System.out.println("Could not start session from GETNAMES.");
 	 		System.exit(1);
 	 		}
 	 		if (!session.openService("//blp/refdata")) {
@@ -221,7 +278,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 			 for (int i = 0; i < numItems; ++i) {
 				 Element securityData = securityDataArray.getValueAsElement(i);
 				 Element fieldData =securityData.getElement("fieldData");
-				 String name = fieldData.getElementAsString(" NAME");
+				 String name = fieldData.getElementAsString("NAME");
 				 if(name!=null){
 					 names.add(name);
 				 }
@@ -231,39 +288,58 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	}
 
 	
-	/*********** TESTING 
+	/** TEST
 	 * @throws Exception ****************************/
 	public static void main(String[] args) throws Exception{
 	//System.out.print(DataProcess.getVar("Change in NFP.csv"));
 		
-		//TEST: getBMG
-		System.out.print(DataProcess.getBMG("NHSPATOT Index",0));
-		//TEST: getNames
+		//TEST: getActual ----PASS
+		System.out.print("\n==============GET Actual TESTING====================\n");
+		System.out.print("output= "+ DataProcess.getActual("DOENUSCH Index"));
+		
+		//TEST: getExp ----PASS
+		System.out.print("\n==============GET Expectation TESTING====================\n");
+		System.out.print("output= "+ DataProcess.getExp("DOENUSCH Index"));
+		
+		//TEST: getNames ----PASS
+/*		System.out.print("\n==============GET NAMES TESTING===========\n");
 		ArrayList<String> test = new ArrayList<String>();
-		test.add("NHSPATOT Index");
+		test.add("CAHSTOTL Index");
+		test.add("NAPMPMI  Index");
 		//add more securities here
 		System.out.print(DataProcess.getNames(test));
+*/
 	}
 
 	@Override
 	protected ArrayList<Double> doInBackground() throws Exception {
-		// TODO Auto-generated method stub
+		System.out.println("INDICATORS field:"+indicators);
+		System.out.println("SECURITIES field:"+securities);
+		
 		ArrayList<Double> output = new ArrayList<Double>();
-		Enumeration<String> keys = indicators.keys();
+		/*		Enumeration<String> keys = indicators.keys();
 		while (keys.hasMoreElements()){;
 			String i = keys.nextElement();	//NOTE: i is indicator security name
 			securities.add(i);
-		}
+		}*/
+//		THIS LINE REACHED
 		//get the actual of each indicator
-		while(true){
-			double actual =  getBMG(securities.get(0),1);
+		int count=0;	//set a loop timeout for testing
+		double actual = 0;
+		while(count<1000){
+			actual =  getActual(securitiesIndex.get(0));
+			System.out.print("ACTUAL FROM BACKGROUND="+actual);
 			if(actual !=0) break;
+			count++;
 		}
+		System.out.print("======================LINE AFTER WHILE LOOP: Fetch actual==============");
 		
 		for (int i =0; i < indicators.size();i++){
-			double actual = getBMG(securities.get(i),1);
+			actual = getActual(securitiesIndex.get(i));
 			output.add(i, actual);
 		}
+		if(actual==0) System.out.print("!!!!!!!!!!!!BACKGROUND PROCESS TIMEOUT!!!!!!!!!!!!");
+		System.out.print("===========READY TO RETURN");
 		return output;
 	}
 	
@@ -271,16 +347,16 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	protected void done(){
 		JPanel contentPane = (JPanel) bar.getContentPane();
 		//get actuals order same with securities
-		try{
+try{
 			actuals = get();
 		}
 		catch(Exception e){
-			System.out.print("\n==========CANNOT GET BMG ACTUALS FROM DoInBackground==========\n");
+			System.out.print("\n==========CANNOT GET BMG ACTUALS FROM $DataProcess.DoInBackground==========\n");
 			e.printStackTrace();
 		}
 		//fill colors
 		for(int i=0;i<securities.size();i++){
-			RectFill rectColor =new RectFill(securities.get(i), indicators.get(i),actuals.get(i));
+			RectFill rectColor =new RectFill(securities.get(i), indicators.get(i),200);	//!!!!!!!!hashtable.get!!
 			contentPane.add(rectColor);
 		}
 		//remove empty rectangles and update new colored rectangles
