@@ -28,7 +28,8 @@ import javax.swing.border.EmptyBorder;
 public class Bars extends JFrame {
 
 	private JPanel contentPane;
-	public ArrayList<String> securities = new ArrayList<String>();	//A list of what's shown on this panel, in order. It's SECURITY not NAME
+	public ArrayList<String> securities = new ArrayList<String>();	//A list of what's shown on this panel, in order. NAME
+	public ArrayList<String> securitiesIndex = new ArrayList<String>(); //A list of security index. SECURITIES
 	
 	/**
 	 * Launch the application.
@@ -67,22 +68,19 @@ public class Bars extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(8, 10, 8, 10));
 		setContentPane(contentPane);
-		//GridLayout test = new GridLayout((choices.size())+2,1);
-		//getContentPane().setLayout(test);
 		BoxLayout boxlayout = new BoxLayout(contentPane, BoxLayout.Y_AXIS);  //Y_AXIS: vertical
 		contentPane.setLayout(boxlayout);
 		
 		//++++++++++++++++++Loop to Draw Rectangles, Given Indicator security name++++++++++++++
-		Enumeration<String> keys = choices.keys();
-	
-		while (keys.hasMoreElements()){
-	
-			String i = keys.nextElement();	//NOTE: i is indicator security name
+		securitiesIndex = new ArrayList<String>(choices.keySet());
+		securities = DataProcess.getNames(securitiesIndex);
+		for(int j=0;j<securitiesIndex.size();j++){
+			String i = securities.get(j);	//NOTE: i is NAME of security
 			securities.add(i);
 			RectDraw rect = new RectDraw(i);
-			//*************Add Expectation value and VAR**************
-			double exp = DataProcess.getBMG(i, 0);
-			double var = DataProcess.getVar(i);
+			//*************Add Expectation value and VAR JLabel**************
+			double exp = DataProcess.getExp(securitiesIndex.get(j));
+			double var = DataProcess.getVar(securitiesIndex.get(j));
 			
 			String text = i+"     E: "+exp + ",  Var:"+var;
 			JLabel indicator = new JLabel(text);
@@ -94,22 +92,7 @@ public class Bars extends JFrame {
 			securities.add(i);		//add security String for next loop calling getActual
 		}
 		
-/*		//++++++++++++++++++Loop to Fill Colors++++++++++++++++++++++
-		
-		//----------NOTE: May need to draw the Rectangles again--------
-		//----------NOTE: THIS IS WRONG! Do it in <main> (ColorChoice)--------
-		getContentPane().remove(contentPane);
-		JPanel newPane = new JPanel();
-		newPane.setBorder(new EmptyBorder(8, 10, 8, 10));
-		setContentPane(newPane);	
-		newPane.setLayout(boxlayout);
-		
-		for(int i=0;i<securities.size();i++){
-			String security = securities.get(i);
-			RectFill bar = new RectFill(security, choices.get(security));
-			newPane.add(bar);
-		}
-*/		
+	
 	}
 	
 	

@@ -35,8 +35,8 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	private JFrame bar;
 	private Hashtable<String,Integer> indicators = new Hashtable<String,Integer>();
 	ArrayList<Double> actuals = new ArrayList<Double>();
-	public ArrayList<String> securities = new ArrayList<String>();
-	public ArrayList<String> securitiesIndex = new ArrayList<String>();
+	public ArrayList<String> securities = new ArrayList<String>(); //NAME
+	public ArrayList<String> securitiesIndex = new ArrayList<String>(); //SECURITIES
 	
 	public DataProcess(Hashtable<String,Integer> indicators, JFrame bar) {
 	// TODO Auto-generated constructor stub
@@ -187,6 +187,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 			 switch (event.eventType().intValue()) {
 			 	case Event.EventType.Constants.SUBSCRIPTION_DATA:
 			 			output = handleDataEvent(event);
+			 			session.unsubscribe(subscriptions);
 			 			return output;
 			 	default:
 			 		break;
@@ -322,7 +323,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 			String i = keys.nextElement();	//NOTE: i is indicator security name
 			securities.add(i);
 		}*/
-//		THIS LINE REACHED
+
 		//get the actual of each indicator
 		int count=0;	//set a loop timeout for testing
 		double actual = 0;
