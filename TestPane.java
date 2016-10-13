@@ -14,6 +14,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.EventListener;
 import java.util.EventObject;
 import java.util.Hashtable;
@@ -25,16 +27,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class TestPane extends JFrame  {
+public class TestPane extends JFrame implements ActionListener {
 
 	private JPanel contentPane;
 	private Rectangle box;
-	protected EventListener myListener;
+	//protected EventListener myListener;
 	
+	private JTextField expText;
 	/**
 	 * Launch the application.
 	 */
@@ -44,7 +48,7 @@ public class TestPane extends JFrame  {
 				try {
 					TestPane frame = new TestPane();
 					frame.setVisible(true);
-					System.out.println("main execute");
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -83,7 +87,8 @@ public class TestPane extends JFrame  {
 			RectFill rectFill = new RectFill();
 			contentPane.add(rectFill);
 			setContentPane(contentPane);
-			System.out.print("Start to generate stuff:\n");
+	//Re-generate graph test
+/*			System.out.print("Start to generate stuff:\n");
 			Component[] comp = contentPane.getComponents();
 			for (int i = 0; i<comp.length;i++){
 				System.out.print(comp[i].getClass().getName()+"\n");
@@ -94,7 +99,12 @@ public class TestPane extends JFrame  {
 				}
 			}
 			contentPane.revalidate();
-			
+*/
+	//Editable textField and listener test
+			double exp = 14.5;
+			expText = new JTextField(Double.toString(exp));
+			expText.addActionListener((ActionListener) this);
+			contentPane.add(expText);
 			
 		//+++++++++++++++++++++Label and buttons++++++++++++++++++
 		
@@ -137,7 +147,7 @@ public class TestPane extends JFrame  {
 		 }
 	}
 	
-/******************Test for event listener*****************/
+/******************Test for event listener*****************
 	interface TestListener extends EventListener{
 		public void fillRect(Event e);
 	}
@@ -158,5 +168,14 @@ public class TestPane extends JFrame  {
 	
 	public void addMyEventListener(TestListener e){
 		myListener = e;
-	}
+	}*/
+	
+	@Override
+	 public void actionPerformed(ActionEvent evt) {
+	    //get input in textfield when Enter is pressed 
+	    double newExp = Double.parseDouble(expText.getText());
+	    System.out.print(newExp+"\n");
+	      
+	      
+	   }
 }
