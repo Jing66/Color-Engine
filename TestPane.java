@@ -35,10 +35,10 @@ import javax.swing.event.ChangeListener;
 public class TestPane extends JFrame implements ActionListener {
 
 	private JPanel contentPane;
-	private Rectangle box;
+	RectDraw rectDraw;
 	//protected EventListener myListener;
 	
-	private JTextField expText;
+	RectDraw rect;
 	/**
 	 * Launch the application.
 	 */
@@ -48,6 +48,7 @@ public class TestPane extends JFrame implements ActionListener {
 				try {
 					TestPane frame = new TestPane();
 					frame.setVisible(true);
+					
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -73,6 +74,7 @@ public class TestPane extends JFrame implements ActionListener {
 			JLabel label2 = new JLabel("22");
 			JLabel label3 = new JLabel("3333333");
 			JButton button1 = new JButton("1");
+			button1.addActionListener(this);
 			button1.setAlignmentX(Component.CENTER_ALIGNMENT); 
 			contentPane.add(label1);
 			contentPane.add(Box.createRigidArea(new Dimension(0, 10))); //Create space between 2 components
@@ -82,11 +84,12 @@ public class TestPane extends JFrame implements ActionListener {
 			contentPane.add(button1);
 			contentPane.add(new JLabel("NFP"));	
 			//draw rectangle
-			RectDraw rect = new RectDraw();
-			contentPane.add(rect);
-			RectFill rectFill = new RectFill();
-			contentPane.add(rectFill);
-			setContentPane(contentPane);
+			rectDraw = new RectDraw("NAME",13.3,0,30,4.5);
+			
+/*			RectFill rectFill = new RectFill();
+			contentPane.add(rectFill);*/
+			setContentPane(rectDraw);
+			
 	//Re-generate graph test
 /*			System.out.print("Start to generate stuff:\n");
 			Component[] comp = contentPane.getComponents();
@@ -101,28 +104,31 @@ public class TestPane extends JFrame implements ActionListener {
 			contentPane.revalidate();
 */
 	//Editable textField and listener test
-			double exp = 14.5;
+/*			double exp = 14.5;
 			expText = new JTextField(Double.toString(exp));
 			expText.addActionListener((ActionListener) this);
 			contentPane.add(expText);
+*/			
 			
 		//+++++++++++++++++++++Label and buttons++++++++++++++++++
 		
 			
 	}
+
 	
 	//++++++++++++++++++++++++++Draw Rectangle++++++++++++++++++++
-	private static class RectDraw extends JPanel {
-        public void paintComponent(Graphics g) {
+/*	private static class RectDraw extends JPanel {
+        boolean fill = false;
+		public void paintComponent(Graphics g) {
         //super.paintComponent(g);  
         
-/*         g.drawRect(100,50,100,20);  	//args: (距离左边，距离上面,length,width)  
+        g.drawRect(100,50,100,20);  	//args: (距离左边，距离上面,length,width)  
          //g.fillRect(130,50,300,20);  //fill it
          g.drawRect(200, 50, 100, 20);  //connect: x' = x + length
          g.drawRect(300, 50, 100, 20);  //connect: x' = x + length
          g.drawRect(230,120,100,20);  //draw a hollow rectangle
          g.setColor(Color.RED);	//set the border to be red
-*/
+
         //generate 20 black rectangles connected together
         for (int start = 100;start<600;start+=50){
        	 g.drawRect(start,10,50,30);
@@ -130,52 +136,31 @@ public class TestPane extends JFrame implements ActionListener {
         g.drawString("150K", 350, 10);
         g.setColor(Color.BLACK);
         
+        if(fill){
+        	 g.drawRect(100,50,100,20);
+			 g.fillRect(130,50,300,20);
+        }
+        
         //Test Transparency
 //        Graphics2D g2d = (Graphics2D)g;
 //        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) 0.5));
 //        g.fillRect(350, 10, 65, 30);
  
         } 
-     }
-	
-	//++++++++++++++++++++Fill colors++++++++++++++++++++
-	private class RectFill extends JPanel{
-		 public void paintComponent(Graphics g){
-			super.paintComponent(g);  
-			 g.drawRect(100,50,100,20);
-			 g.fillRect(130,50,300,20);
-		 }
-	}
-	
-/******************Test for event listener*****************
-	interface TestListener extends EventListener{
-		public void fillRect(Event e);
-	}
-	
-	class MyEvent extends EventObject{
-		public MyEvent(Object source){
-			super(source);
+		public void setFill(boolean set){
+			fill = set;
 		}
-	}
-
-	void fillRect(MyEvent e){
-		System.out.println("start to generate new stuff");
-		//Thread.sleep(2000);
-		RectFill fill = new RectFill();
-		contentPane.add(fill);
-		setContentPane(contentPane);
-	}
-	
-	public void addMyEventListener(TestListener e){
-		myListener = e;
-	}*/
-	
+     
+     }
+	*/
 	@Override
-	 public void actionPerformed(ActionEvent evt) {
-	    //get input in textfield when Enter is pressed 
-	    double newExp = Double.parseDouble(expText.getText());
-	    System.out.print(newExp+"\n");
-	      
-	      
+	 public void actionPerformed(ActionEvent e) {
+		Object source = e.getSource();
+		if (source instanceof JTextField){
+			System.out.print("Button clicked\n");
+			rectDraw.setFill(true);
+			this.revalidate();
+			rect.repaint();
+		}
 	   }
 }

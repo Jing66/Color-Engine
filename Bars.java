@@ -27,12 +27,13 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 
-public class Bars extends JFrame implements ActionListener {
+public class Bars extends JFrame {
 
-	private JPanel contentPane;
-	public ArrayList<String> securities = new ArrayList<String>();	//A list of what's shown on this panel, in order. NAME
-	public ArrayList<String> securitiesIndex = new ArrayList<String>(); //A list of security index. SECURITIES
+	public static JPanel contentPane;
+	public static ArrayList<String> securities = new ArrayList<String>();	//A list of what's shown on this panel, in order. NAME
+	public static ArrayList<String> securitiesIndex = new ArrayList<String>(); //A list of security index. SECURITIES
 	
+	public static ArrayList<RectDraw> rectangles = new ArrayList<RectDraw>();	//list of rectangle components
 	/**
 	 * Launch the application.
 	 */
@@ -77,38 +78,26 @@ public class Bars extends JFrame implements ActionListener {
 		securitiesIndex = new ArrayList<String>(choices.keySet());
 		securities = DataProcess.getNames(securitiesIndex);
 		for(int j=0;j<securitiesIndex.size();j++){
-			String i = securities.get(j);	//NOTE: i is NAME of security
-			securities.add(i);
-			RectDraw rect = new RectDraw(i);
-			//*************Add Expectation value and VAR JLabel**************
-			double exp = DataProcess.getExp(securitiesIndex.get(j));
 			double var = DataProcess.getVar(securitiesIndex.get(j));
+			//Construct a RectDraw ==> Actual==0 for now
+			RectDraw rect = new RectDraw(securities.get(j), DataProcess.getExp(securitiesIndex.get(j)),choices.get(securitiesIndex.get(j)),0,var);	
+			//*************Add Expectation value and VAR JLabel**************
 			
-			String text = i+"       Var:"+var;
+			String text = securities.get(j)+"       Var:"+var;
 			JLabel indicator = new JLabel(text);
 			indicator.setAlignmentX(CENTER_ALIGNMENT);
 			indicator.setFont(new Font("Serif", Font.BOLD, 20));
 			contentPane.add(indicator);
 			//Construct a editable textfield for Expectation
-			JTextField expText = new JTextField(Double.toString(exp));
-			expText.addActionListener(this);
-			contentPane.add(expText);
+			
 			//Draw Rectangle
 			contentPane.add(rect);
-			securities.add(i);		//add security String for next loop calling getActual
+			rectangles.add(rect);
 		}
 		
 	
 	}
 
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-	
-	}
-	
-	
-	
 }
 

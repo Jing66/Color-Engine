@@ -17,10 +17,11 @@ public class RectFill extends RectDraw{
 			private final int FULL_RECT_LEN = 250;
 			private final int SINGLE_CELL_LEN = FULL_RECT_LEN/10;
 			private final int MIDDLE_RECT_LEN = 150;
+			private double exp;
 			
 	//Constructor
-			public RectFill(String name, int bond, double actual){
-				super(name);
+			public RectFill(String name, int bond, double actual, double exp){
+				super(name,exp);
 				setPreferredSize(new Dimension(600,20));
 				setLayout(new FlowLayout());
 				this.name = name;
@@ -43,14 +44,7 @@ public class RectFill extends RectDraw{
 				double realData = actual;
 				
 				double var = DataProcess.getVar(name);
-				double exp = 0;
-				try {
-					exp = DataProcess.getBMG(name,0);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					System.out.print("\n============ERROR GETTING EXP=============");
-				}
+				
 				double mVar =  var/(realData - exp);
 				//While get Actual data
 				while (mVar != 0 ){
