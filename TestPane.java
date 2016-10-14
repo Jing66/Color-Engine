@@ -35,7 +35,7 @@ import javax.swing.event.ChangeListener;
 public class TestPane extends JFrame implements ActionListener {
 
 	private JPanel contentPane;
-	private Rectangle box;
+	RectDraw rectDraw;
 	//protected EventListener myListener;
 	
 	RectDraw rect;
@@ -48,6 +48,7 @@ public class TestPane extends JFrame implements ActionListener {
 				try {
 					TestPane frame = new TestPane();
 					frame.setVisible(true);
+					
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -83,12 +84,12 @@ public class TestPane extends JFrame implements ActionListener {
 			contentPane.add(button1);
 			contentPane.add(new JLabel("NFP"));	
 			//draw rectangle
-			rect = new RectDraw();
-			contentPane.add(rect);
+			rectDraw = new RectDraw("NAME",13.3,0,30);
 			
 /*			RectFill rectFill = new RectFill();
 			contentPane.add(rectFill);*/
-			setContentPane(contentPane);
+			setContentPane(rectDraw);
+			
 	//Re-generate graph test
 /*			System.out.print("Start to generate stuff:\n");
 			Component[] comp = contentPane.getComponents();
@@ -113,20 +114,21 @@ public class TestPane extends JFrame implements ActionListener {
 		
 			
 	}
+
 	
 	//++++++++++++++++++++++++++Draw Rectangle++++++++++++++++++++
-	private static class RectDraw extends JPanel {
+/*	private static class RectDraw extends JPanel {
         boolean fill = false;
 		public void paintComponent(Graphics g) {
         //super.paintComponent(g);  
         
-/*         g.drawRect(100,50,100,20);  	//args: (距离左边，距离上面,length,width)  
+        g.drawRect(100,50,100,20);  	//args: (距离左边，距离上面,length,width)  
          //g.fillRect(130,50,300,20);  //fill it
          g.drawRect(200, 50, 100, 20);  //connect: x' = x + length
          g.drawRect(300, 50, 100, 20);  //connect: x' = x + length
          g.drawRect(230,120,100,20);  //draw a hollow rectangle
          g.setColor(Color.RED);	//set the border to be red
-*/
+
         //generate 20 black rectangles connected together
         for (int start = 100;start<600;start+=50){
        	 g.drawRect(start,10,50,30);
@@ -150,45 +152,13 @@ public class TestPane extends JFrame implements ActionListener {
 		}
      
      }
-	
-	//++++++++++++++++++++Fill colors++++++++++++++++++++
-/*	private class RectFill extends JPanel{
-		 public void paintComponent(Graphics g){
-			super.paintComponent(g);  
-			 g.drawRect(100,50,100,20);
-			 g.fillRect(130,50,300,20);
-		 }
-	}
 	*/
-/******************Test for event listener*****************
-	interface TestListener extends EventListener{
-		public void fillRect(Event e);
-	}
-	
-	class MyEvent extends EventObject{
-		public MyEvent(Object source){
-			super(source);
-		}
-	}
-
-	void fillRect(MyEvent e){
-		System.out.println("start to generate new stuff");
-		//Thread.sleep(2000);
-		RectFill fill = new RectFill();
-		contentPane.add(fill);
-		setContentPane(contentPane);
-	}
-	
-	public void addMyEventListener(TestListener e){
-		myListener = e;
-	}*/
-	
 	@Override
 	 public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		if (source instanceof JButton){
+		if (source instanceof JTextField){
 			System.out.print("Button clicked\n");
-			rect.setFill(true);
+			rectDraw.setFill(true);
 			this.revalidate();
 			rect.repaint();
 		}

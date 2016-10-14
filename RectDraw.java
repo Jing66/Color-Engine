@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -32,12 +34,18 @@ public class RectDraw extends JPanel implements ActionListener{
 	public RectDraw(String name, double exp,int bond, double actual){
 		setPreferredSize(new Dimension(600,20));
 		setLayout(new FlowLayout());
+		
 		this.name = name;
 		this.exp = exp;
 		expText = new JTextField(Double.toString(exp));
 		expText.addActionListener(this);
 		this.bond = bond;
 		this.realData = actual;
+		
+		expText = new JTextField(Double.toString(exp));
+		expText.setAlignmentX(Component.CENTER_ALIGNMENT); 
+		expText.addActionListener(this);
+		this.add(expText);
 	}
 	
 	//Draw Rectangle: Each Rectangle length 125, startX=100, Width=30, startY = 5; middle rect length = 75;
@@ -53,9 +61,8 @@ public class RectDraw extends JPanel implements ActionListener{
 	    }
 		
 		if(fill){
-		
-			double var = DataProcess.getVar(name);
-			
+			//double var = DataProcess.getVar(name);
+			double var =  1.3;
 			double mVar =  var/(realData - exp);
 			//While get Actual data
 			while (mVar != 0 ){
@@ -103,9 +110,15 @@ public class RectDraw extends JPanel implements ActionListener{
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent evt) {
 		// TODO Auto-generated method stub
-		exp = Double.parseDouble(expText.getText());
+		try{
+			exp = Double.parseDouble(expText.getText());
+			System.out.print("Exp has changed to: "+exp);
+		}catch(Exception e){
+			System.out.print("==========Expectation input should be double========");
+			e.printStackTrace();
+		}
 	}
 	
 	public double getExp(){
