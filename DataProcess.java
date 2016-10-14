@@ -359,6 +359,7 @@ try{
 		// fill colors
 		for(int i=0;i<Bars.rectangles.size();i++){
 			System.out.print("++++++Repainting "+i+"th rectangle!++++");
+			Bars.rectangles.get(i).setFill(true);
 			contentPane.revalidate();
 			Bars.rectangles.get(i).repaint();
 			
