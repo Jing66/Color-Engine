@@ -350,27 +350,31 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		//get actuals order same with securities
 try{
 			actuals = get();
+			System.out.print("=========Get all the real-time data: "+actuals);
 		}
 		catch(Exception e){
 			System.out.print("\n==========CANNOT GET BMG ACTUALS FROM $DataProcess.DoInBackground==========\n");
 			e.printStackTrace();
 		}
-		//fill colors
-		for(int i=0;i<securities.size();i++){
-			RectFill rectColor =new RectFill(securities.get(i), indicators.get(i),200.0,14.4);	//!!!!!!!!hashtable.get!!
-			contentPane.add(rectColor);
+		// fill colors
+		for(int i=0;i<Bars.rectangles.size();i++){
+			System.out.print("++++++Repainting "+i+"th rectangle!++++");
+			contentPane.revalidate();
+			Bars.rectangles.get(i).repaint();
+			
 		}
 		//remove empty rectangles and update new colored rectangles
-		Component[] comp = contentPane.getComponents();
+/*		Component[] comp = contentPane.getComponents();
 		for (int i = 0; i<comp.length;i++){
 			System.out.print(comp[i].getClass().getName()+"\n");
 			if(comp[i].getClass().getName().toString().equals("colors.Bars$RectDraw") ){
+				//revalidate
 				contentPane.remove(comp[i]);
-				System.out.print("REMOVED!");
+				System.out.print("=======REMOVED!=========");
 						
 			}
 		}
-		contentPane.revalidate();
+*/
 		
 	}
 	

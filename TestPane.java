@@ -84,7 +84,7 @@ public class TestPane extends JFrame implements ActionListener {
 			contentPane.add(button1);
 			contentPane.add(new JLabel("NFP"));	
 			//draw rectangle
-			rectDraw = new RectDraw("NAME",13.3,0,30);
+			rectDraw = new RectDraw("NAME",13.3,0,30,4.5);
 			
 /*			RectFill rectFill = new RectFill();
 			contentPane.add(rectFill);*/

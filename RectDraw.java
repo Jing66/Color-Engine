@@ -29,9 +29,10 @@ public class RectDraw extends JPanel implements ActionListener{
 	private double realData;
 	private int bond; 
 	private String name; //SecuritiesIndex
+	private double var;
 	
 	//Constructor
-	public RectDraw(String name, double exp,int bond, double actual){
+	public RectDraw(String name, double exp,int bond, double actual, double var){
 		setPreferredSize(new Dimension(600,20));
 		setLayout(new FlowLayout());
 		
@@ -41,6 +42,7 @@ public class RectDraw extends JPanel implements ActionListener{
 		expText.addActionListener(this);
 		this.bond = bond;
 		this.realData = actual;
+		this.var = var;
 		
 		expText = new JTextField(Double.toString(exp));
 		expText.setAlignmentX(Component.CENTER_ALIGNMENT); 
@@ -61,8 +63,7 @@ public class RectDraw extends JPanel implements ActionListener{
 	    }
 		
 		if(fill){
-			//double var = DataProcess.getVar(name);
-			double var =  1.3;
+			
 			double mVar =  var/(realData - exp);
 			//While get Actual data
 			while (mVar != 0 ){
