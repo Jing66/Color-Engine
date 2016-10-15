@@ -54,22 +54,21 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	}
 
 	/************Read variable from the H4 cell********/
-	public static double getVar(String fileName){
+	public static double getVar(String index){
 	double var=0;
 	/*++++++++++++++++++Open an csv file instead++++++++++++++++++*/
 	BufferedReader br = null; 
 	String line= " ";
 	try {
- 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\"+fileName+".csv";
+ 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\vars.csv";
  		br = new BufferedReader(new FileReader(fullPath));
            //======The data is located at 4th line last cell=====
    		line = br.readLine();
-           line = br.readLine();
-           line = br.readLine();
-           line = br.readLine();
-           String[] values = line.split(",");
-           var = Double.parseDouble(values[values.length-1]);
-
+          while(line!=null){
+        	  String[] tuples = line.split(",");
+        	  if(tuples[0]==index) {var = Double.parseDouble(tuples[1]);break;}
+        	  line = br.readLine();
+          }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
