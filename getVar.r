@@ -1,4 +1,4 @@
-setwd("C:\Users\windows7\Desktop\JingyLiu\db")
+#!/usr/bin/env Rscript
 library(Rblpapi)
 blpConnect()
 
@@ -9,14 +9,24 @@ getVar <- function(index ="CARSCHNG Index" ){
   df <- bdh(index,c("BN_SURVEY_MEDIAN","ACTUAL_RELEASE"),start.date = Sys.Date()-365*10)
   df_filtered <- df[complete.cases(df), ]
   df_filtered$diff <- (df_filtered$ACTUAL_RELEASE-df_filtered$BN_SURVEY_MEDIAN)
-  mean(df_filtered$diff)
+  abs_diff <- sapply(df_filtered$diff, abs)
+  mean(abs_diff)
+  
+}
+
+getName <- function(index){
+  df <- bdp(index, c("NAME"))
+  df$NAME
 }
 
 #main
+setwd("C:/Users/windows7/Desktop/JingyLiu/db")
 #read Indices.csv
 indices <- read.csv("Indices.csv")
 #get var for each index
-vars <- sapply(indices$Index,getVar)
+indicators <- sapply(indices$Index,as.character)
+vars <- sapply(indicators,getVar)
 #write var into var.csv
-result_df <- data.frame(indices$Index, vars)
-write.csv(result_df, file = "vars.csv")
+names <- sapply(indicators,getName)
+result_df <- data.frame(names, vars)
+write.csv(result_df, file = "Vars.csv")
