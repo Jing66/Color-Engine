@@ -16,9 +16,6 @@ import javax.swing.JTextField;
 
 public class RectDraw extends JPanel implements ActionListener{
 
-	/**
-	 * Create the panel.
-	 */
 	//BOND = 0; INVERSE = 1;
 	private final int FULL_RECT_LEN = 250;
 	private final int MIDDLE_RECT_LEN = 150;
@@ -26,12 +23,14 @@ public class RectDraw extends JPanel implements ActionListener{
 	private double exp =0;
 	private JTextField expText;
 	private boolean fill = false;
-	private double realData;
+	private double realData=0;
 	private int bond; 
 	private String name; //SecuritiesIndex
 	private double var;
 	
-	//Constructor
+	/**
+	 * Create the panel.
+	 */
 	public RectDraw(String name, double exp,int bond, double actual, double var){
 		setPreferredSize(new Dimension(600,20));
 		setLayout(new FlowLayout());
@@ -57,57 +56,69 @@ public class RectDraw extends JPanel implements ActionListener{
 		int startX = 50;
 		int middleX = 100;
 		while (startX<=FULL_RECT_LEN*6+MIDDLE_RECT_LEN){	
-			if(countBox == 3){g.drawRect(startX,5,MIDDLE_RECT_LEN,30);startX+=MIDDLE_RECT_LEN;countBox++;continue;}
-			g.drawRect(startX,5,FULL_RECT_LEN,30);
+			if(countBox == 3){
+				g.drawRect(startX,20,MIDDLE_RECT_LEN,30);
+				startX+=MIDDLE_RECT_LEN;
+				countBox++;
+				middleX=startX-MIDDLE_RECT_LEN/2;
+				continue;
+			}
+			g.drawRect(startX,20,FULL_RECT_LEN,30);
 	       	startX+=FULL_RECT_LEN;countBox++;
 	    }
 		
 		if(fill){
-			
-			double mVar =  var/(realData - exp);
+			System.out.print("\nRe-painting now!!----\n");
+			double mVar =  (realData - exp)/var;
+			System.out.print("mVar = "+mVar);
+			Graphics2D g2d = (Graphics2D)g;
 			//While get Actual data
-			while (mVar != 0 ){
+			if (mVar != 0 ){
 				int numSmallBox = (int) Math.abs((10*mVar));
 				float countSmallBox = 0;
-				Graphics2D g2d = (Graphics2D)g;
+				
 				
 				//*********************Fill Colors*************************
 				//If (BOND && mVar >0)||(Inverse && mVar<0) : red on right
 				if(bond == 0&& mVar > 0 || bond ==1 && mVar <0){
+					System.out.print("\nCASE: A > E: blue box to the right \n");
 					mVar = Math.abs(mVar);
 					int startFill=middleX+MIDDLE_RECT_LEN/2;
 					while(countSmallBox < numSmallBox){
 						g.setColor(Color.BLUE);
 						g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
-						g.fillRect(startFill, 5, SINGLE_CELL_LEN, 30);
+						g.fillRect(startFill, 20, SINGLE_CELL_LEN, 30);
 						startFill +=SINGLE_CELL_LEN;
 						countSmallBox++;
 					}
 				}
 				else{
+					System.out.print("\nCASE: A < E: red box to the right \n");
 					mVar = Math.abs(mVar);
 					int startFill=middleX-MIDDLE_RECT_LEN/2-SINGLE_CELL_LEN;
 					while(countSmallBox < numSmallBox){
 						g.setColor(Color.RED);
 						g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
-						g.fillRect(startFill, 5, SINGLE_CELL_LEN, 30);
+						g.fillRect(startFill, 20, SINGLE_CELL_LEN, 30);
 						startFill -=SINGLE_CELL_LEN;
 						countSmallBox++;
 					}
 				}
-				//If Actual == expectation, grey box in middle
-				if(mVar==0){
-					g.setColor(Color.GRAY);
-					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-					g.fillRect(middleX-MIDDLE_RECT_LEN/2, 5, MIDDLE_RECT_LEN, 30);
-				}
-				//Show Actual in middle
-				String actual = Double.toString(realData);
-				g.setColor(Color.BLACK);
-				g.setFont(new Font("TimesRoman", Font.BOLD, 20));
-				g.drawString(actual, middleX-MIDDLE_RECT_LEN/2,30);
 			}
+				//If Actual == expectation, grey box in middle
+			else{
+				System.out.print("\nCASE: A = E: grey box in middle\n");
+				g.setColor(Color.GRAY);
+				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+				g.fillRect(middleX-MIDDLE_RECT_LEN/2, 20, MIDDLE_RECT_LEN, 30);
+			}
+			//Show Actual in middle
+			String actual = Double.toString(realData);
+			g.setColor(Color.BLACK);
+			g.setFont(new Font("TimesRoman", Font.BOLD, 30));
+			g.drawString(actual, middleX,45);
 		}
+		
 	}
 
 	@Override
@@ -115,7 +126,7 @@ public class RectDraw extends JPanel implements ActionListener{
 		// TODO Auto-generated method stub
 		try{
 			exp = Double.parseDouble(expText.getText());
-			System.out.print("Exp has changed to: "+exp);
+			System.out.print("\n\n+++++++++++++++++++Exp has changed to: "+exp+"\n");
 		}catch(Exception e){
 			System.out.print("==========Expectation input should be double========");
 			e.printStackTrace();
@@ -128,5 +139,12 @@ public class RectDraw extends JPanel implements ActionListener{
 	
 	public void setFill(boolean set){
 		fill = set;
+	}
+	public void setActual(double data){
+		this.realData = data;
+	}
+	@Override
+	public String toString(){
+		return "Rectangle name: " + name + ", Exp=" + exp + ", Var= " + var + ", bond= "+bond;
 	}
 }

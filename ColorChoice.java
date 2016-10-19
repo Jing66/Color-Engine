@@ -24,7 +24,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 	Hashtable<String,Integer> selected = new Hashtable<String,Integer>();
 	ArrayList<String> securitiesIndex = new ArrayList<String>();	//A list of all securities listed on panel (not NAME)
 	ArrayList<String> securities = new ArrayList<String>();	//A list of all security NAMEs corresponding to securitiesIndex
-	
+	ArrayList<String> namesSelected = new ArrayList<String>();
 	/**
 	 * Launch the application.
 	 */
@@ -60,7 +60,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-		//+++++++++++++++Set Layout+++++++++++++++++
+		//+++++++++++++++Set GridBagLayout+++++++++++++++++
 		contentPane.setLayout(new GridBagLayout());
 		GridBagConstraints left = new GridBagConstraints();
 		left.anchor = GridBagConstraints.WEST;
@@ -71,43 +71,35 @@ public class ColorChoice extends JFrame implements ActionListener{
         right.gridwidth = GridBagConstraints.REMAINDER;
         GridBagConstraints middle = new GridBagConstraints();
         middle.weightx = 3.0;
-        
-      //++++++++++++Read all Indices for which we have Var into securitiesIndex+++++++++++++++++++	
-		BufferedReader br = null; 
-		String line= " ";
-		try {
-	 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\vars.csv";
-	 		br = new BufferedReader(new FileReader(fullPath));
-	           //======The data is located at 4th line last cell=====
-	   		line = br.readLine();
-	          while(line!=null){
-	        	  String[] tuples = line.split(",");
-	        	  //Add indices into securitiesIndex
-	        	  securitiesIndex.add(tuples[0]);
-	        	  line = br.readLine();
-	          }
-	        } catch (FileNotFoundException e) {
-	            e.printStackTrace();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        } finally {
-	            if (br != null) {
-	                try {
-	                    br.close();
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-	            }
-	        }
+      //++++++++++++Read all Indices for which we have Var into securitiesIndex and NAME into securities+++++++++++++++++++	
+      		BufferedReader br = null; 
+      		String line= " ";
+      		try {
+      	 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\vars.csv";
+      	 		br = new BufferedReader(new FileReader(fullPath));
+      	   		line = br.readLine();
+      	   		line = br.readLine();	//skip the first line
+      	          while(line!=null){
+      	        	  String[] tuples = line.split(",");
+      	        	  //Add indices into securitiesIndex
+      	        	  securitiesIndex.add(tuples[0]);
+      	        	  securities.add(tuples[1]);
+      	        	  line = br.readLine();
+      	          }
+      	        } catch (FileNotFoundException e) {
+      	            e.printStackTrace();
+      	        } catch (IOException e) {
+      	            e.printStackTrace();
+      	        } finally {
+      	            if (br != null) {
+      	                try {
+      	                    br.close();
+      	                } catch (IOException e) {
+      	                    e.printStackTrace();
+      	                }
+      	            }
+      	        }
 		
-		//Get the names of the indicators and show
-		try {
-			securities = DataProcess.getNames(securitiesIndex);
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			System.out.print("\n===============ERROR GETTING SECURITY NAMES============");
-		}
 		//Show the names to the users to choose
 		//NOTE: When pass to bars, pass security name not NAME field
 		GridLayout test = new GridLayout((securities.size())+2,4);
@@ -216,6 +208,7 @@ public class ColorChoice extends JFrame implements ActionListener{
 			else{
 				String label = getSecurity(box.getName());
 				selected.remove(label);
+				
 			}
 		}
 		

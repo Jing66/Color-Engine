@@ -12,14 +12,19 @@ In your ~/db, file ```Indices.csv``` which lists all the Macroeconomics Indicato
 
 ### Run the database update
 
+On windows 10,
+
 ```
-source ('~/colors/getVar.r')
+"C:\Program Files\R\R-3.3.1\bin\x64\Rscript.exe" "C:/Users/windows7/Desktop/JingyLiu/db/getVar.r"
+
 ```
 
 ## Run the Color Engine
 
-``` javac colors/ColorChoice.java
-	java colors.ColorChoice
+``` 
+javac colors/ColorChoice.java
+java colors.ColorChoice
+
 ```
 
 ## Dependencies
