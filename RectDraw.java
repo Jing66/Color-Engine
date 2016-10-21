@@ -18,6 +18,7 @@ public class RectDraw extends JPanel implements ActionListener{
 
 	//BOND = 0; INVERSE = 1;
 	private final int FULL_RECT_LEN = 250;
+	private final int HEIGHT = 40;
 	private final int MIDDLE_RECT_LEN = 150;
 	private final int SINGLE_CELL_LEN = FULL_RECT_LEN/10;
 	private double exp =0;
@@ -42,9 +43,11 @@ public class RectDraw extends JPanel implements ActionListener{
 		this.bond = bond;
 		this.realData = actual;
 		this.var = var;
-		
+		//Editable expectation value
 		expText = new JTextField(Double.toString(exp));
 		expText.setAlignmentX(Component.CENTER_ALIGNMENT); 
+		Font bigFont = expText.getFont().deriveFont(Font.PLAIN, 30f);
+		expText.setFont(bigFont);
 		expText.addActionListener(this);
 		this.add(expText);
 	}
@@ -57,13 +60,13 @@ public class RectDraw extends JPanel implements ActionListener{
 		int middleX = 100;
 		while (startX<=FULL_RECT_LEN*6+MIDDLE_RECT_LEN){	
 			if(countBox == 3){
-				g.drawRect(startX,20,MIDDLE_RECT_LEN,30);
+				g.drawRect(startX,HEIGHT,MIDDLE_RECT_LEN,40);
 				startX+=MIDDLE_RECT_LEN;
 				countBox++;
 				middleX=startX-MIDDLE_RECT_LEN/2;
 				continue;
 			}
-			g.drawRect(startX,20,FULL_RECT_LEN,30);
+			g.drawRect(startX,HEIGHT,FULL_RECT_LEN,40);
 	       	startX+=FULL_RECT_LEN;countBox++;
 	    }
 		
@@ -87,7 +90,7 @@ public class RectDraw extends JPanel implements ActionListener{
 					while(countSmallBox < numSmallBox){
 						g.setColor(Color.BLUE);
 						g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
-						g.fillRect(startFill, 20, SINGLE_CELL_LEN, 30);
+						g.fillRect(startFill, HEIGHT, SINGLE_CELL_LEN, 40);
 						startFill +=SINGLE_CELL_LEN;
 						countSmallBox++;
 					}
@@ -99,7 +102,7 @@ public class RectDraw extends JPanel implements ActionListener{
 					while(countSmallBox < numSmallBox){
 						g.setColor(Color.RED);
 						g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)((countSmallBox+1)/(numSmallBox+1))));
-						g.fillRect(startFill, 20, SINGLE_CELL_LEN, 30);
+						g.fillRect(startFill, HEIGHT, SINGLE_CELL_LEN, 40);
 						startFill -=SINGLE_CELL_LEN;
 						countSmallBox++;
 					}
@@ -110,13 +113,16 @@ public class RectDraw extends JPanel implements ActionListener{
 				System.out.print("\nCASE: A = E: grey box in middle\n");
 				g.setColor(Color.GRAY);
 				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-				g.fillRect(middleX-MIDDLE_RECT_LEN/2, 20, MIDDLE_RECT_LEN, 30);
+				g.fillRect(middleX-MIDDLE_RECT_LEN/2, HEIGHT, MIDDLE_RECT_LEN, 40);
 			}
 			//Show Actual in middle
 			String actual = Double.toString(realData);
+			String mVarString = Double.toString(mVar);
 			g.setColor(Color.BLACK);
-			g.setFont(new Font("TimesRoman", Font.BOLD, 30));
-			g.drawString(actual, middleX,45);
+			g.setFont(new Font("TimesRoman", Font.BOLD, 40));
+			g.drawString(actual, middleX-MIDDLE_RECT_LEN/4,HEIGHT+40);
+			g.setFont(new Font("TimesRoman", Font.PLAIN, 20));
+			g.drawString(mVarString,middleX+MIDDLE_RECT_LEN/2 , HEIGHT -10);
 		}
 		
 	}

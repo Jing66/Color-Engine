@@ -28,5 +28,5 @@ indicators <- sapply(indices$Index,as.character)
 vars <- sapply(indicators,getVar)
 #write var into var.csv
 names <- sapply(indicators,getName)
-result_df <- data.frame(names, vars)
-write.csv(result_df, file = "Vars.csv")
+result_df <- data.frame(indicators,names, vars)
+write.csv(result_df, file = "Vars.csv",row.names=FALSE)

@@ -1,10 +1,12 @@
 package colors;
 
+import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.swing.JFrame;
@@ -51,16 +53,19 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		}
 	}
 
-	/************Read variable from Vars.csv********/
+	/************Read variable from the H4 cell********/
 	public static double getVar(String index){
 	double var=0;
+	/*++++++++++++++++++Open an csv file instead++++++++++++++++++*/
 	BufferedReader br = null; 
 	String line= " ";
 	try {
  		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\Vars.csv";
  		br = new BufferedReader(new FileReader(fullPath));
+           //======The data is located at 4th line last cell=====
    		line = br.readLine();
           while(line!=null){
+        	  //System.out.print(line+" next line: \n");
         	  String[] tuples = line.split(",");
         	  if(tuples[0].equals(index)) {var = Double.parseDouble(tuples[2]);break;}
         	  line = br.readLine();
@@ -90,6 +95,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	 * @return      data to return
 	 */
 	public static double getExp(String indicator) throws Exception {
+		indicator = indicator.substring(1,indicator.length()-1);
 		double output = 0;
 		SessionOptions sessionOptions = new SessionOptions();
  		sessionOptions.setServerHost("localhost");
@@ -161,6 +167,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	 */
 	//return 0 if data not ready
 	public static double getActual(String indicator) throws Exception {
+		indicator = indicator.substring(1,indicator.length()-1);
 		double output = 0;
 		SessionOptions sessionOptions = new SessionOptions();
 		 sessionOptions.setServerHost("localhost");
@@ -224,6 +231,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		 * @return      the list of names parsed from the message
 		 */
 	 public static ArrayList<String> getNames(ArrayList<String> securities) throws Exception{
+		//System.out.print("\n arguments = "+securities);
 		 ArrayList<String> names = new ArrayList<String>();
 		 SessionOptions sessionOptions = new SessionOptions();
 	 		sessionOptions.setServerHost("localhost");
@@ -243,7 +251,8 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 			Request request = refDataSvc.createRequest("ReferenceDataRequest");
 	 		//loop to append all securities
 			for (int i =0; i < securities.size();i++){
-				request.getElement("securities").appendValue(securities.get(i));
+				String securityIndex = securities.get(i).substring(1, securities.get(i).length()-1);
+				request.getElement("securities").appendValue(securityIndex);
 			}
 			request.getElement("fields").appendValue("NAME");
 	 		session.sendRequest(request, null);
@@ -273,6 +282,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		MessageIterator iter = event.messageIterator();
 		 while (iter.hasNext()) {
 			 Message message = iter.next();
+			 System.out.print(message);
 			 Element ReferenceDataResponse = message.asElement();
 			 Element securityDataArray =  ReferenceDataResponse.getElement("securityData");
 			 //parse
