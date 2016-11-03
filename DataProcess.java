@@ -355,7 +355,8 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	}
 	
 	@Override
-	protected void done(){JPanel contentPane = (JPanel) bar.getContentPane();
+	protected void done(){
+		//JPanel contentPane = (JPanel) bar.getContentPane();
 	//get actuals order same with securities
 try{
 		actuals = get();
@@ -371,7 +372,7 @@ try{
 		System.out.println(Bars.rectangles.get(i).toString());
 		Bars.rectangles.get(i).setActual(actuals.get(i));
 		Bars.rectangles.get(i).setFill(true);
-		contentPane.revalidate();
+		//contentPane.revalidate();
 		Bars.rectangles.get(i).repaint();
 		
 	}

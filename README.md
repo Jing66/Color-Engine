@@ -10,7 +10,7 @@ Java8 required, R required, Bloomberg API required
 
 In your ~/db, file ```Indices.csv``` which lists all the Macroeconomics Indicators that you want to run on.
 
-### Run the database update
+### Run the database update manually
 
 On windows 10,
 
@@ -26,6 +26,11 @@ javac colors/ColorChoice.java
 java colors.ColorChoice
 
 ```
+
+### Update database or insert new indicator: copy indicator from bloomberg terminal and write up a nickname.
+
+### Add/Remove indicator: single selection
+
 
 ## Dependencies
 

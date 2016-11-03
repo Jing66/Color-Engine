@@ -5,11 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 
 import javax.swing.*;
@@ -71,35 +67,30 @@ public class ColorChoice extends JFrame implements ActionListener{
         right.gridwidth = GridBagConstraints.REMAINDER;
         GridBagConstraints middle = new GridBagConstraints();
         middle.weightx = 3.0;
-      //++++++++++++Read all Indices for which we have Var into securitiesIndex and NAME into securities+++++++++++++++++++	
-      		BufferedReader br = null; 
-      		String line= " ";
-      		try {
-      	 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\vars.csv";
-      	 		br = new BufferedReader(new FileReader(fullPath));
-      	   		line = br.readLine();
-      	   		line = br.readLine();	//skip the first line
-      	          while(line!=null){
-      	        	  String[] tuples = line.split(",");
-      	        	  //Add indices into securitiesIndex
-      	        	  securitiesIndex.add(tuples[0]);
-      	        	  securities.add(tuples[1]);
-      	        	  line = br.readLine();
-      	          }
-      	        } catch (FileNotFoundException e) {
-      	            e.printStackTrace();
-      	        } catch (IOException e) {
-      	            e.printStackTrace();
-      	        } finally {
-      	            if (br != null) {
-      	                try {
-      	                    br.close();
-      	                } catch (IOException e) {
-      	                    e.printStackTrace();
-      	                }
-      	            }
-      	        }
+      //++++++++++++Read Files' names into securitiesIndex+++++++++++++++++++	
 		
+		File folder = new File("C:\\Users\\windows7\\Desktop\\JingyLiu\\db"); //NOTE: Path to be changed
+		File[] listOfFiles = folder.listFiles();
+		
+		for (File file : listOfFiles) {
+		    if (file.isFile()) {
+		        String fullName = file.getName();
+		     
+		        String name = fullName.split("\\.")[0];
+		        securitiesIndex.add(name);
+		    }
+		}
+		//String[] securities = {"NHSPATOT Index"};
+		
+		
+		//Get the names of the indicators and show
+		try {
+			securities = DataProcess.getNames(securitiesIndex);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			System.out.print("\n===============ERROR GETTING SECURITY NAMES============");
+		}
 		//Show the names to the users to choose
 		//NOTE: When pass to bars, pass security name not NAME field
 		GridLayout test = new GridLayout((securities.size())+2,4);
