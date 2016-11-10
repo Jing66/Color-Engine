@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -95,7 +96,9 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	 * @return      data to return
 	 */
 	public static double getExp(String indicator) throws Exception {
-		indicator = indicator.substring(1,indicator.length()-1);
+		//System.out.print("\n*****Indicator before strip: "+indicator);
+		indicator = strip(indicator);
+		//System.out.print("\n*****Indicator after strip: "+indicator+"\n");
 		double output = 0;
 		SessionOptions sessionOptions = new SessionOptions();
  		sessionOptions.setServerHost("localhost");
@@ -141,7 +144,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		 MessageIterator iter = event.messageIterator();
 		 while (iter.hasNext()) {
 			 Message message = iter.next();
-			// System.out.print(message);
+			 //System.out.print(message);
 			 Element ReferenceDataResponse = message.asElement();
 			 Element securityDataArray =  ReferenceDataResponse.getElement("securityData");
 			 //parse
@@ -150,7 +153,13 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 				 Element securityData = securityDataArray.getValueAsElement(i);
 				 Element fieldData =securityData.getElement("fieldData");
 				 //String NAME = fieldData.getElementAsString(" NAME");
-				 double exp = fieldData.getElementAsFloat64("RT_BN_SURVEY_MEDIAN");
+				 double exp=0;
+				 if(fieldData.hasElement("RT_BN_SURVEY_MEDIAN")){
+					 exp = fieldData.getElementAsFloat64("RT_BN_SURVEY_MEDIAN");
+				 }
+				 else{
+					 System.out.println("\nSOME HAS NO FIELD EXPECTATION=====Restart=======");
+				 }
 				 //double actual =fieldData.getElementAsFloat64("LAST_PRICE");
 				 output = exp; 
 			 }
@@ -167,7 +176,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	 */
 	//return 0 if data not ready
 	public static double getActual(String indicator) throws Exception {
-		indicator = indicator.substring(1,indicator.length()-1);
+		indicator = strip(indicator);
 		double output = 0;
 		SessionOptions sessionOptions = new SessionOptions();
 		 sessionOptions.setServerHost("localhost");
@@ -203,7 +212,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		 MessageIterator iter = event.messageIterator();
 		 while (iter.hasNext()) {
 			 Message message = iter.next();
-//	 System.out.print(message);
+	// System.out.print(message);
 			 Element ReferenceDataResponse = message.asElement();
 			 
 			 //parse
@@ -251,7 +260,8 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 			Request request = refDataSvc.createRequest("ReferenceDataRequest");
 	 		//loop to append all securities
 			for (int i =0; i < securities.size();i++){
-				String securityIndex = securities.get(i).substring(1, securities.get(i).length()-1);
+				//String securityIndex = securities.get(i).substring(1, securities.get(i).length()-1);
+				String securityIndex = strip(securities.get(i));
 				request.getElement("securities").appendValue(securityIndex);
 			}
 			request.getElement("fields").appendValue("NAME");
@@ -282,7 +292,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		MessageIterator iter = event.messageIterator();
 		 while (iter.hasNext()) {
 			 Message message = iter.next();
-			 System.out.print(message);
+			// System.out.print(message);
 			 Element ReferenceDataResponse = message.asElement();
 			 Element securityDataArray =  ReferenceDataResponse.getElement("securityData");
 			 //parse
@@ -299,6 +309,14 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		return names;
 	}
 
+	private static String strip(String indicator){
+		char quote = '\"';
+		
+		if(indicator.charAt(0)==quote) {indicator = indicator.substring(1, indicator.length()-1);}
+		
+		return indicator;
+		
+	}
 	
 	/** TEST
 	 * @throws Exception ****************************/
@@ -325,6 +343,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		//add more securities here
 		System.out.print(DataProcess.getNames(test));
 */
+		//System.out.println(DataProcess.strip("Index"));
 	}
 
 	@Override
@@ -335,22 +354,27 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		
 		ArrayList<Double> output = new ArrayList<Double>();
 		
-		//get the actual of each indicator
-		int count=0;	//set a loop timeout for testing
+		//get the actual of each indicator. 4 min slow + 1 min 10sec fast
+		//int count=0;	//set a loop timeout for testing
 		double actual = 0;
-		while(count<100){
+		while(true){
 			actual =  getActual(securitiesIndex.get(0));
-			System.out.print("GOT The first actual data from background! data= "+actual);
-			if(actual !=0) break;
-			count++;
-			Thread.sleep(150);
+			System.out.print("\n\nGetting a test actual! ="+actual);
+			int minute = Calendar.getInstance().get(Calendar.MINUTE);
+			int second = Calendar.getInstance().get(Calendar.SECOND);
+			if(actual !=0){output.add(0,actual);break;}
+			//pause and keep looping
+			if (minute%5==0 && second <2 || minute%5==4 && second >57) {
+				Thread.sleep(10);
+			}
+			else {Thread.sleep(7000);}
 		}
-		for (int i =0; i < indicators.size();i++){
+		
+		for (int i =1; i < indicators.size();i++){
 			actual = getActual(securitiesIndex.get(i));
 			output.add(i, actual);
 		}
 		if(actual==0) System.out.print("\n!!!!!!!!!!!!BACKGROUND PROCESS TIMEOUT!!!!!!!!!!!!");
-		System.out.print("\nRETURN from background now");
 		return output;
 	}
 	
@@ -369,11 +393,14 @@ try{
 	// fill colors
 	for(int i=0;i<Bars.rectangles.size();i++){
 		System.out.print("\n++++++Repainting "+i+"th rectangle!++++");
-		System.out.println(Bars.rectangles.get(i).toString());
-		Bars.rectangles.get(i).setActual(actuals.get(i));
-		Bars.rectangles.get(i).setFill(true);
-		//contentPane.revalidate();
-		Bars.rectangles.get(i).repaint();
+		//System.out.println(Bars.rectangles.get(i).toString());
+		if(actuals.get(i)!=0){
+			Bars.rectangles.get(i).setActual(actuals.get(i));
+			Bars.rectangles.get(i).setFill(true);
+			//contentPane.revalidate();
+			Bars.rectangles.get(i).repaint();	
+		}
+		
 		
 	}
 	

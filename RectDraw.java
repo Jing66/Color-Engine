@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.AlphaComposite;
@@ -92,7 +93,6 @@ public class RectDraw extends JPanel implements ActionListener{
 		if(fill){
 			System.out.print("\nRe-painting now!!----\n");
 			double mVar =  (realData - exp)/var;
-			System.out.print("mVar = "+mVar);
 			
 			//While get Actual data
 			if (mVar <=-0.1 ||mVar > 0.1 ){
@@ -103,7 +103,7 @@ public class RectDraw extends JPanel implements ActionListener{
 				//*********************Fill Colors*************************
 				//If (BOND && mVar >0)||(Inverse && mVar<0) : red on right
 				if(bond == 0&& mVar > 0 || bond ==1 && mVar <0){
-					System.out.print("\nCASE: A > E: blue box to the right \n");
+					//System.out.print("\nCASE: A > E: blue box to the right \n");
 					mVar = Math.abs(mVar);
 					int startFill=middleX+MIDDLE_RECT_LEN/2;
 					while(countSmallBox < numSmallBox){
@@ -115,7 +115,7 @@ public class RectDraw extends JPanel implements ActionListener{
 					}
 				}
 				else{
-					System.out.print("\nCASE: A < E: red box to the right \n");
+					//System.out.print("\nCASE: A < E: red box to the right \n");
 					mVar = Math.abs(mVar);
 					int startFill=middleX-MIDDLE_RECT_LEN/2-SINGLE_CELL_LEN;
 					while(countSmallBox < numSmallBox){
@@ -190,8 +190,11 @@ public class RectDraw extends JPanel implements ActionListener{
 	private void setHeight(int newHeight){
 		recHeight = newHeight;
 	}
+	public String getName(){
+		return name;
+	}
 	@Override
 	public String toString(){
-		return "Rectangle name: " + name + ", Exp=" + exp + ", Var= " + var + ", bond= "+bond;
+		return "\nRectangle name: " + name + ", Exp=" + exp + ", Var= " + var + ", bond= "+bond;
 	}
 }
