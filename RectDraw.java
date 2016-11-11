@@ -31,7 +31,7 @@ public class RectDraw extends JPanel implements ActionListener{
 	private boolean fill = false;
 	private double realData=0;
 	private int bond; 
-	private String name; //SecuritiesIndex
+	private String name; //SecuritiesName
 	private double var;
 	private int recHeight = 80;
 	
@@ -91,7 +91,7 @@ public class RectDraw extends JPanel implements ActionListener{
 	    }
 		
 		if(fill){
-			System.out.print("\nRe-painting now!!----\n");
+			System.out.print("\nSet to Fill the Colors----\n");
 			double mVar =  (realData - exp)/var;
 			
 			//While get Actual data

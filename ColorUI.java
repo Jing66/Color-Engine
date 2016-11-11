@@ -72,7 +72,7 @@ public class ColorUI extends JFrame implements ActionListener {
 		//++++++++++++Set Panel+++++++++++++++++++		
 		setTitle("Colors Version 2");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 50, 970, 1000);
+		setBounds(100, 50, 970, 950);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(15, 15, 15, 45));	
 		
@@ -93,7 +93,6 @@ public class ColorUI extends JFrame implements ActionListener {
 		try {
 			getPrevious();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		//++++++++++++++Generate List for SELECTED available indicies++++++++++++++
@@ -214,7 +213,7 @@ public class ColorUI extends JFrame implements ActionListener {
 	}
 	
 	public void writeToDB(String index, String nickName){
-		//TODO: append last line to indices.csv
+	
 		if(index.equals("")||nickName.equals("")) return;
 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\indices.csv";
 		Writer output;
@@ -225,7 +224,7 @@ public class ColorUI extends JFrame implements ActionListener {
 			output.append(index+","+nickName+"\r\n");
 			output.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(contentPane, "Write to indices.csv failed! Please close the file and run again!");
 			System.exit(1);
@@ -235,7 +234,7 @@ public class ColorUI extends JFrame implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		
 		Object source = e.getSource();
 		
 		//If a JButton is clicked
@@ -243,8 +242,9 @@ public class ColorUI extends JFrame implements ActionListener {
 			JButton o = (JButton) source;
 			String label = o.getText();
 			if(label.equals("ADD")){
-				//TODO: Add selected into [selected];
+				//Add selected into [selected];
 				 int index = list.getSelectedIndex();
+				 if(index<0) JOptionPane.showMessageDialog(contentPane, "Please first select an indicator and then add it!");
 				 if(!selected.containsKey(securitiesIndex.get(index))){
 					 if(securitiesIndex.get(index).contains("DOE")) selected.put(securitiesIndex.get(index), 1); 
 					 else selected.put(securitiesIndex.get(index), 0);
@@ -260,8 +260,9 @@ public class ColorUI extends JFrame implements ActionListener {
 				
 			}
 			else if(label.equals("REMOVE")){
-				//TODO: Delete elements from scroll pane;
+				//Delete elements from scroll pane;
 				 int index = selectedList.getSelectedIndex();
+				 if(index<0) JOptionPane.showMessageDialog(contentPane, "Please first select an indicator and then remove it!");
 				 String toRemove = indexSelected.get(index);
 				 model.removeElement(nameSelected.get(index));
 				 nameSelected.remove(index);
@@ -297,11 +298,19 @@ public class ColorUI extends JFrame implements ActionListener {
 				
 				bar.setVisible(true);
 				//----------------Start BACKGROUND Process here--------------------
-				DataProcess data = new DataProcess(selected,bar);
+				/*DataProcess data = new DataProcess(selected,bar);
 				data.execute();
+				*/
+				
+				//ArrayList<SingleDataProcess> processes = new ArrayList<SingleDataProcess>();
+				for(int i=0; i<indexSelected.size();i++){
+					RectDraw rect = bar.rectangles.get(i);
+					SingleDataProcess data = new SingleDataProcess(rect, indexSelected.get(i));
+					data.execute();
+				}
 			}
 		
-		//update database
+		//++++++++++++++++++++++++++update database++++++++++++++++++++++++++++++++
 		else{
 			String index = newIndicator.getText();
 			String nickName = newNickName.getText(); 

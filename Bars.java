@@ -1,29 +1,15 @@
 package colors;
-import java.awt.AlphaComposite;
-/**
- * Bars: Second panel to generate animation
- * @author liujingyun
- */
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
+
+
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Enumeration;
+
 import java.util.Hashtable;
-
 import javax.swing.JLabel;
-
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 
@@ -33,7 +19,7 @@ public class Bars extends JFrame {
 	public static ArrayList<String> securities = new ArrayList<String>();	//A list of what's shown on this panel, in order. NAME
 	public static ArrayList<String> securitiesIndex = new ArrayList<String>(); //A list of security index. SECURITIES
 	
-	public static ArrayList<RectDraw> rectangles = new ArrayList<RectDraw>();	//list of rectangle components
+	public ArrayList<RectDraw> rectangles = new ArrayList<RectDraw>();	//list of rectangle components
 	/**
 	 * Launch the application.
 	 */
@@ -47,7 +33,7 @@ public class Bars extends JFrame {
 					
 					Bars frame = new Bars(test);
 					frame.setVisible(true);
-					//TODO: generate a new Frame after the data come out
+					
 					Bars newFrame = new Bars(test);
 					newFrame.setVisible(true);
 				} catch (Exception e) {
@@ -75,29 +61,30 @@ public class Bars extends JFrame {
 		contentPane.setLayout(boxlayout);
 		
 		//++++++++++++++++++Loop to Draw Rectangles, Given Indicator security name++++++++++++++
-		securitiesIndex = new ArrayList<String>(choices.keySet());
-		securities = DataProcess.getNames(securitiesIndex);
-		for(int j=0;j<securitiesIndex.size();j++){
-			double var = DataProcess.getVar(securitiesIndex.get(j));
-			//Construct a RectDraw ==> Actual==0 for now
-			RectDraw rect = new RectDraw(securities.get(j), DataProcess.getExp(securitiesIndex.get(j)),choices.get(securitiesIndex.get(j)),0,var);	
-			//*************Add Expectation value and VAR JLabel**************
-			
-			String text = securities.get(j)+"       Var:"+var;
-			JLabel indicator = new JLabel(text);
-			indicator.setAlignmentX(CENTER_ALIGNMENT);
-			indicator.setFont(new Font("Serif", Font.BOLD, 20));
-			contentPane.add(indicator);
-			//Construct a editable textfield for Expectation
-			
-			//Draw Rectangle
-			contentPane.add(rect);
-			rectangles.add(rect);
+				securitiesIndex = new ArrayList<String>(choices.keySet());
+				System.out.print("Securities Index: "+securitiesIndex);
+				securities = DataProcess.getNames(securitiesIndex);
+				for(int j=0;j<securitiesIndex.size();j++){
+					double var = DataProcess.getVar(securitiesIndex.get(j));
+					//Construct a RectDraw ==> Actual==0 for now
+					RectDraw rect = new RectDraw(securities.get(j), DataProcess.getExp(securitiesIndex.get(j)),choices.get(securitiesIndex.get(j)),0,var);	
+					//*************Add Expectation value and VAR JLabel**************
+						
+					String text = securities.get(j) + "           Var= " +var;
+					JLabel indicator = new JLabel(text);
+					indicator.setAlignmentX(CENTER_ALIGNMENT);
+					indicator.setFont(new Font("Serif", Font.BOLD, 25));
+					contentPane.add(indicator);
+					
+					
+					//Draw Rectangle
+					contentPane.add(rect);
+					rectangles.add(rect);
 		}
 		
 	
 	}
-
-
+	
+	
+	
 }
-
