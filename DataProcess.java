@@ -177,6 +177,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	//return 0 if data not ready
 	public static double getActual(String indicator) throws Exception {
 		indicator = strip(indicator);
+		//System.out.println("requiring real time data for"+indicator);
 		double output = 0;
 		SessionOptions sessionOptions = new SessionOptions();
 		 sessionOptions.setServerHost("localhost");
@@ -348,7 +349,8 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 
 	@Override
 	protected ArrayList<Double> doInBackground() throws Exception {
-		System.out.println("\nPrinting from DataProcess:\n INDICATORS Hashtable:"+indicators);
+		return actuals;
+		/*System.out.println("\nPrinting from DataProcess:\n INDICATORS Hashtable:"+indicators);
 		System.out.println("SecuritiesIndex:" + securitiesIndex);
 		System.out.println("SECURITIES field:"+securities+"\n====================================\n");
 		
@@ -376,10 +378,12 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		}
 		if(actual==0) System.out.print("\n!!!!!!!!!!!!BACKGROUND PROCESS TIMEOUT!!!!!!!!!!!!");
 		return output;
+		*/
 	}
 	
 	@Override
 	protected void done(){
+/*
 		//JPanel contentPane = (JPanel) bar.getContentPane();
 	//get actuals order same with securities
 try{
@@ -401,9 +405,9 @@ try{
 			Bars.rectangles.get(i).repaint();	
 		}
 		
-		
-	}
 	
+	}
+	*/	
 }
 
 
