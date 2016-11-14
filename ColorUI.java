@@ -39,8 +39,8 @@ public class ColorUI extends JFrame implements ActionListener {
 	Hashtable<String,Integer> selected = new Hashtable<String,Integer>();
 	ArrayList<String> securitiesIndex = new ArrayList<String>();	//A list of ALL securities listed on panel (not NAME)
 	ArrayList<String> securities = new ArrayList<String>();	//A list of all security NAMEs corresponding to securitiesIndex
-	ArrayList<String> indexSelected = new ArrayList<String>(); //A list of SELECTED securities indices
-	ArrayList<String> nameSelected =new ArrayList<String>(); //A list of SELECTED securities nickNames
+	public ArrayList<String> indexSelected = new ArrayList<String>(); //A list of SELECTED securities indices
+	public ArrayList<String> nameSelected =new ArrayList<String>(); //A list of SELECTED securities nickNames
 
 	JList<String> selectedList;
 	JList<String> list;
@@ -253,8 +253,8 @@ public class ColorUI extends JFrame implements ActionListener {
 					//show on selectedList
 					 model.addElement(securities.get(index));
 					 selectedList.setModel(model);
-					 System.out.println("JList Model: "+model.toString());
-					 System.out.println("New add:"+securitiesIndex.get(index)+"and "+securities.get(index));
+					 //System.out.println("JList Model: "+model.toString());
+					 //System.out.println("New add:"+securitiesIndex.get(index)+"and "+securities.get(index));
 					
 				 }
 				
@@ -284,18 +284,13 @@ public class ColorUI extends JFrame implements ActionListener {
 				}
 			}
 			
+			
+			//+++++++++++++++++++++Main+++++++++++++++++++++++
 			else if(label.equals( "GO")){
+				System.out.println("\n====================$ColorUI: Initializing bars===============");
 				Bars bar = null;
-			//System.out.print("Passing argument to Bars: selected = "+selected);
-				try {
-					bar = new Bars(selected);
-				} catch (Exception e1) {
-					e1.printStackTrace();
-					System.out.print("\n==========ERROR generating BARS============");
-					JOptionPane.showMessageDialog(contentPane, "Please check if index has survey value on BMG!");
-					System.exit(1);
-				}
-				
+				bar = new Bars(selected);
+				System.out.println("====================$ColorUI: Bars initialization finished!===============\n");
 				bar.setVisible(true);
 				//----------------Start BACKGROUND Process here--------------------
 				/*DataProcess data = new DataProcess(selected,bar);
@@ -305,7 +300,7 @@ public class ColorUI extends JFrame implements ActionListener {
 				//ArrayList<SingleDataProcess> processes = new ArrayList<SingleDataProcess>();
 				for(int i=0; i<indexSelected.size();i++){
 					RectDraw rect = bar.rectangles.get(i);
-					SingleDataProcess data = new SingleDataProcess(rect, indexSelected.get(i));
+					SingleDataProcess data = new SingleDataProcess(rect);
 					data.execute();
 				}
 			}

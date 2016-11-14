@@ -10,20 +10,19 @@ public class SingleDataProcess extends SwingWorker<Double,Void>{
 	double actual =0;
 	String index;
 	
-	public SingleDataProcess(RectDraw rectangle, String index) {
+	public SingleDataProcess(RectDraw rectangle) {
 		// Auto-generated constructor stub
 		this.rectangle = rectangle;
-		this.index = index;
-		System.out.println("\n====================Create a new thread of rectangle!");
+		this.index = rectangle.getIndex();
 	}
 
 	@Override
 	protected Double doInBackground() throws Exception {
 		
-		System.out.println("Starting doing in background: "+index);
+		System.out.println("\n>>>>>>>>>>>>>>>>>Starting doing in background for: "+rectangle.toString());
 		while(true){
 			actual =  DataProcess.getActual(index);
-			System.out.print("\n\nGetting a test actual from $singleDataProcess for "+index+" actual="+actual);
+			System.out.print("\n\nTrying to get actual from $singleDataProcess for "+index+", actual="+actual);
 			int minute = Calendar.getInstance().get(Calendar.MINUTE);
 			int second = Calendar.getInstance().get(Calendar.SECOND);
 			if(actual !=0){break;}
@@ -39,10 +38,9 @@ public class SingleDataProcess extends SwingWorker<Double,Void>{
 	
 	@Override
 	protected void done(){
-		System.out.println("\nThis thread is ending....");
 		try{
 			actual = get();
-			System.out.print(">>>>>>>>>>>>>>Got THIS real-time data: "+actual);
+			System.out.print("\n>>>>>>>>>>>>>>Got THIS real-time data: "+actual+" for index "+index);
 		}
 		catch(Exception e){
 			System.out.print("\n==========CANNOT GET BMG ACTUALS FROM $SingleDataProcess.DoInBackground==========\n");

@@ -1,11 +1,14 @@
 package colors;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,8 +17,10 @@ import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.plaf.basic.BasicArrowButton;
 
 public class RectDraw extends JPanel implements ActionListener{
 
@@ -35,13 +40,20 @@ public class RectDraw extends JPanel implements ActionListener{
 	private double var;
 	private int recHeight = 80;
 	
+	private String index;
 	/**
 	 * Create the panel.
 	 */
 	public RectDraw(String name, double exp,int bond, double actual, double var){
-		setPreferredSize(new Dimension(600,20));
+		setPreferredSize(new Dimension(600,80));
 		setLayout(new FlowLayout());
-		
+		/*GridBagLayout layOut = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 1.0;
+		c.gridx = 3;
+		*/
+		//setLayout(new BorderLayout());
 		this.name = name;
 		this.exp = exp;
 		expText = new JTextField(Double.toString(exp));
@@ -49,6 +61,9 @@ public class RectDraw extends JPanel implements ActionListener{
 		this.bond = bond;
 		this.realData = actual;
 		this.var = var;
+		
+		//Fill the blank
+		this.add(new JLabel("                                                                                                                                                                                                                                                                  "));
 		//Editable expectation value
 		expText = new JTextField(Double.toString(exp));
 		expText.setAlignmentX(Component.CENTER_ALIGNMENT); 
@@ -56,22 +71,39 @@ public class RectDraw extends JPanel implements ActionListener{
 		expText.setFont(bigFont);
 		expText.addActionListener(this);
 		this.add(expText);
-		
+	/*
+		c.anchor = GridBagConstraints.LINE_END;
+		c.gridx = 5;
+		c.gridy = 0;
+	*/
+		//Fill the blank: make arrows at the end
+		this.add(new JLabel("                                                                                                                                                                                                                                                           "));
 		//adjustable width of rectangles
-		JButton incr = new JButton("+");
+		/*JButton incr = new JButton("+");
 		JButton decr = new JButton("-");
-		incr.setFont(new Font("Arial", Font.PLAIN, 20));
+		*/
+		BasicArrowButton incr = new BasicArrowButton(BasicArrowButton.NORTH);   //getDirection() returns 1(int)
+		BasicArrowButton decr = new BasicArrowButton(BasicArrowButton.SOUTH);	//getDirection() returns 5(int)
+		/*incr.setFont(new Font("Arial", Font.PLAIN, 20));
 		decr.setFont(new Font("Arial", Font.PLAIN, 20));
 		decr.setAlignmentX(Component.LEFT_ALIGNMENT);
-		incr.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		incr.setAlignmentX(Component.RIGHT_ALIGNMENT);*/
 		incr.addActionListener(this);
 		decr.addActionListener(this);
 		this.add(incr);
 		this.add(decr);
+	
+		//System.out.println("FIRST Initialize");
+		
+	/*	layOut.addLayoutComponent(incr,c);
+		layOut.addLayoutComponent(decr,c);
+		setLayout(layOut);
+	*/
 	}
 	
 	//Draw Rectangle: Each Rectangle length 125, startX=100, Width=30, startY = 5; middle rect length = 75;
 	public void paintComponent(Graphics g){
+		//System.out.println("PAINTING");
 		super.paintComponent(g);  
 		Graphics2D g2d = (Graphics2D)g;
 		g2d.setStroke(new BasicStroke(3));
@@ -91,9 +123,9 @@ public class RectDraw extends JPanel implements ActionListener{
 	    }
 		
 		if(fill){
-			System.out.print("\nSet to Fill the Colors----\n");
+			System.out.println("\nRepainting this rectnagle..."+toString());
 			double mVar =  (realData - exp)/var;
-			
+			mVar = Double.valueOf(String.format("%1.2f",mVar));
 			//While get Actual data
 			if (mVar <=-0.1 ||mVar > 0.1 ){
 				int numSmallBox = (int) Math.abs((10*mVar));
@@ -150,9 +182,10 @@ public class RectDraw extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent evt) {
 		Object source = evt.getSource();
 		if(source instanceof JButton){
-			JButton o = (JButton) source;
-			String label = o.getText();
-			if(label.equals("+")){
+			
+			BasicArrowButton o = (BasicArrowButton) source;
+			//System.out.println("!!!! get direction:"+o.getDirection());
+			if(o.getDirection()==1) {
 				//If increase the width
 				setHeight(recHeight+UNIT_WIDTH);
 			}
@@ -193,8 +226,21 @@ public class RectDraw extends JPanel implements ActionListener{
 	public String getName(){
 		return name;
 	}
+	
+	public void setExp(double input){
+		this.exp = input;
+		expText.setText(Double.toString(input));
+	}
+	
+	public void setIndex(String input){
+		this.index = input;
+	}
+	
+	public String getIndex(){
+		return this.index;
+	}
 	@Override
 	public String toString(){
-		return "\nRectangle name: " + name + ", Exp=" + exp + ", Var= " + var + ", bond= "+bond;
+		return "\nRectangle name: " + name + ", Exp=" + exp + ", Var= " + var + ", bond= "+bond+" index= "+index;
 	}
 }

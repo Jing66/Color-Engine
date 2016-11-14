@@ -4,11 +4,13 @@ package colors;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.util.ArrayList;
-
 import java.util.Hashtable;
+
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -49,7 +51,7 @@ public class Bars extends JFrame {
 	 * @throws Exception 
 	 * @param  choices  Hashtable that contains all the information by users' choice
 	 */
-	public Bars(Hashtable<String,Integer> choices) throws Exception{
+	public Bars(Hashtable<String,Integer> choices){
 		//++++++++++++++++++Layout++++++++++++++++++++++++++++++++
 		setTitle("Bars Ready");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,25 +63,50 @@ public class Bars extends JFrame {
 		contentPane.setLayout(boxlayout);
 		
 		//++++++++++++++++++Loop to Draw Rectangles, Given Indicator security name++++++++++++++
-				securitiesIndex = new ArrayList<String>(choices.keySet());
-				System.out.print("Securities Index: "+securitiesIndex);
-				securities = DataProcess.getNames(securitiesIndex);
-				for(int j=0;j<securitiesIndex.size();j++){
-					double var = DataProcess.getVar(securitiesIndex.get(j));
+		securitiesIndex = new ArrayList<String>(choices.keySet());
+		System.out.print("Securities Index: "+securitiesIndex);
+		try {
+			securities = DataProcess.getNames(securitiesIndex);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		for(int j=0;j<securitiesIndex.size();j++){
+			double var = DataProcess.getVar(securitiesIndex.get(j));
+			//System.out.println("!!!!!VAR original is: "+var);
+			var = Double.valueOf(String.format("%1.2f",var));
+			
 					//Construct a RectDraw ==> Actual==0 for now
-					RectDraw rect = new RectDraw(securities.get(j), DataProcess.getExp(securitiesIndex.get(j)),choices.get(securitiesIndex.get(j)),0,var);	
-					//*************Add Expectation value and VAR JLabel**************
-						
-					String text = securities.get(j) + "           Var= " +var;
-					JLabel indicator = new JLabel(text);
-					indicator.setAlignmentX(CENTER_ALIGNMENT);
-					indicator.setFont(new Font("Serif", Font.BOLD, 25));
-					contentPane.add(indicator);
-					
-					
-					//Draw Rectangle
-					contentPane.add(rect);
-					rectangles.add(rect);
+			RectDraw rect = null;
+			rect = new RectDraw(securities.get(j), 0,choices.get(securitiesIndex.get(j)),0,var);
+			double testExp = 0;
+			try {
+				 testExp = DataProcess.getExp(securitiesIndex.get(j)); 
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("\n==========ERROR getting EXP for "+securities.get(j)+"============");
+				JOptionPane.showMessageDialog(contentPane, "BMG has no survey for "+securities.get(j)+"! Please input manually! ");
+				
+			}	
+			finally{
+				rect.setExp(testExp);  
+				rect.setIndex(securitiesIndex.get(j));
+				//*************Add Expectation value and VAR JLabel**************			
+				String text = securities.get(j) + "           Var= " +var;
+				JLabel indicator = new JLabel(text);
+				indicator.setAlignmentX(CENTER_ALIGNMENT);
+				indicator.setFont(new Font("Serif", Font.BOLD, 25));
+				contentPane.add(indicator);
+				
+//				JButton test = new JButton("test");
+//				contentPane.add(test);
+				
+				System.out.println("\n>>>Initialized this rectangle:" + rect.toString());
+				//Draw Rectangle
+				contentPane.add(rect);
+				rectangles.add(rect);
+				
+			}
+			
 		}
 		
 	
