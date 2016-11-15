@@ -132,7 +132,7 @@ public class ColorUI extends JFrame implements ActionListener {
 		submit.addActionListener(this);
 		contentPane.add(submit);		
 		
-		JLabel note = new JLabel("NOTE: Every indicator except for DOE is: A > E => buy (color red)\n");
+		JLabel note = new JLabel("NOTE: Every indicator except for DOE, Unemployment, Initial Claims is: A > E => buy (color red)\n");
 		contentPane.add(note);
 		
 		
@@ -140,7 +140,9 @@ public class ColorUI extends JFrame implements ActionListener {
 		
 	}
 
-	
+	/*
+	 *  Return all the indicators available
+	 */
 	public void getIndices(){
   		BufferedReader br = null; 
   		String line= " ";
@@ -174,7 +176,7 @@ public class ColorUI extends JFrame implements ActionListener {
 	/*
 	 * read .csv in db and update selected, nameSelected, indexSelected, model 
 	 */
-	public void getPrevious() throws Exception{
+	private void getPrevious() throws Exception{
 		BufferedReader br = null; String line= " ";
 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\saved.csv";
 		br = new BufferedReader(new FileReader(fullPath));
@@ -184,7 +186,8 @@ public class ColorUI extends JFrame implements ActionListener {
         	  //Add indices into securitiesIndex
         	  this.indexSelected.add(tuples[0]);
         	  this.nameSelected.add(tuples[1]);
-        	  if(tuples[0].contains("DOE")) selected.put(tuples[0], 1);
+        	  if(tuples[0].contains("DOE")|| tuples[0].contains("Unemployment")|| tuples[0].contains("Initial")) selected.put(tuples[0], 1);
+
         	  else selected.put(tuples[0], 0);
         	  line = br.readLine();
 	    }
@@ -212,7 +215,8 @@ public class ColorUI extends JFrame implements ActionListener {
 		System.out.println("=========================\nIn saveNames write: \n"+sb.toString()+"======================\n");
 	}
 	
-	public void writeToDB(String index, String nickName){
+
+	private void writeToDB(String index, String nickName){
 		if(index.equals("")||nickName.equals("")) return;
 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\indices.csv";
 		Writer output;
@@ -305,7 +309,7 @@ public class ColorUI extends JFrame implements ActionListener {
 			String command = "\"C:\\Program Files\\R\\R-3.3.1\\bin\\x64\\Rscript.exe\" \"C:/Users/windows7/Desktop/JingyLiu/db/getVar.r\"";
 			try {
 				Process process = Runtime.getRuntime().exec(command);
-				 JOptionPane.showMessageDialog(contentPane, "Updating database......Please DON\'T terminate program!");
+				 JOptionPane.showMessageDialog(contentPane, "Updating database......Please wait and DON\'T terminate program!");
 				InputStream is = process.getInputStream();
 			      InputStreamReader isr = new InputStreamReader(is);
 			      BufferedReader br = new BufferedReader(isr);
@@ -315,7 +319,7 @@ public class ColorUI extends JFrame implements ActionListener {
 			    	  System.exit(0);
 			      }
 			      else{
-			    	  JOptionPane.showMessageDialog(contentPane, "Cannot get the Var value of the new indicator! Please exam if the BMG index is legit or modify the file manually!");
+			    	  JOptionPane.showMessageDialog(contentPane, "Cannot get the Var value of the new indicator! Please exam if the BMG index is legit and modify the file manually!");
 			    	  System.exit(1);
 			      }
 				
@@ -323,7 +327,16 @@ public class ColorUI extends JFrame implements ActionListener {
 				
 				exc.printStackTrace();
 				JOptionPane.showMessageDialog(contentPane, "Add new indicator failed! Please don't re-try!");
-				//TODO: Remove the line in indices.csv
+				//TOCHECK:  Remove the line in indices.csv
+				RandomAccessFile f = new RandomAccessFile(fileName, "rw");
+				long length = f.length() - 1;
+				do {                     
+    				length -= 1;
+    				f.seek(length);
+    				byte b = f.readByte();
+				} while(b != 10);
+				f.setLength(length+1);
+				f.close();
 			}
 			
 			
