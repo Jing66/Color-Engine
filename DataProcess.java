@@ -32,7 +32,7 @@ import com.bloomberglp.blpapi.SubscriptionList;
  * @author liujingyun
  *
  */
-public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
+public class DataProcess {
 	private JFrame bar;
 	private Hashtable<String,Integer> indicators = new Hashtable<String,Integer>();
 	ArrayList<Double> actuals = new ArrayList<Double>();
@@ -40,7 +40,6 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	public ArrayList<String> securitiesIndex = new ArrayList<String>();
 	
 	public DataProcess(Hashtable<String,Integer> indicators, JFrame bar) {
-	// TODO Auto-generated constructor stub
 		this.indicators = indicators;
 		this.bar = bar;
 		try {
@@ -66,7 +65,6 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
            //======The data is located at 4th line last cell=====
    		line = br.readLine();
           while(line!=null){
-        	  //System.out.print(line+" next line: \n");
         	  String[] tuples = line.split(",");
         	  if(tuples[0].equals(index)) {var = Double.parseDouble(tuples[2]);break;}
         	  line = br.readLine();
@@ -213,9 +211,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		 MessageIterator iter = event.messageIterator();
 		 while (iter.hasNext()) {
 			 Message message = iter.next();
-	// System.out.print(message);
-			 Element ReferenceDataResponse = message.asElement();
-			 
+			 Element ReferenceDataResponse = message.asElement();	 
 			 //parse
 			 if(ReferenceDataResponse.hasElement("LAST_PRICE") && ReferenceDataResponse.hasElement("TIME")){
 				 double actual =ReferenceDataResponse.getElementAsFloat64("LAST_PRICE");
@@ -228,7 +224,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 				 System.out.print("\n!!!Does Not Contain LAST_PRICE or TIME\n");
 				 System.out.print(message);
 			 }
-//				System.out.print("====PARSED:=========\n"+"TIME= "+date+"\nactual=" + actual);
+
 			 }
 			 return output;
 		 }
@@ -261,7 +257,6 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 			Request request = refDataSvc.createRequest("ReferenceDataRequest");
 	 		//loop to append all securities
 			for (int i =0; i < securities.size();i++){
-				//String securityIndex = securities.get(i).substring(1, securities.get(i).length()-1);
 				String securityIndex = strip(securities.get(i));
 				request.getElement("securities").appendValue(securityIndex);
 			}
@@ -278,7 +273,6 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	 		 		names = handleNameResponseEvent(event);
 	 		 		break;
 	 		 	default:
-	 		 		//handleOtherEvent(event);
 	 		 		break;
 	 		 	}
 	 		 }
@@ -323,92 +317,9 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	 * @throws Exception ****************************/
 	public static void main(String[] args) throws Exception{
 		System.out.print(DataProcess.getVar("NAPMPMI  Index"));
-		/*
-		 * CARSCHNG Index (Retail sales)
-		 * DOENUSCH Index (DOE)
-		 */
-		
-		//TEST: getActual ----PASS
-		/*System.out.print("\n==============GET Actual TESTING====================\n");
-		System.out.print("output= "+ DataProcess.getActual("CARSCHNG Index"));*/
-		
-		//TEST: getExp ----PASS
-		/*System.out.print("\n==============GET Expectation TESTING====================\n");
-		System.out.print("output= "+ DataProcess.getExp("CARSCHNG Index"));*/
-		
-		//TEST: getNames ----PASS
-/*		System.out.print("\n==============GET NAMES TESTING===========\n");
-		ArrayList<String> test = new ArrayList<String>();
-		test.add("CAHSTOTL Index");
-		test.add("NAPMPMI  Index");
-		//add more securities here
-		System.out.print(DataProcess.getNames(test));
-*/
-		//System.out.println(DataProcess.strip("Index"));
 	}
 
-	@Override
-	protected ArrayList<Double> doInBackground() throws Exception {
-		return actuals;
-		/*System.out.println("\nPrinting from DataProcess:\n INDICATORS Hashtable:"+indicators);
-		System.out.println("SecuritiesIndex:" + securitiesIndex);
-		System.out.println("SECURITIES field:"+securities+"\n====================================\n");
-		
-		ArrayList<Double> output = new ArrayList<Double>();
-		
-		//get the actual of each indicator. 4 min slow + 1 min 10sec fast
-		//int count=0;	//set a loop timeout for testing
-		double actual = 0;
-		while(true){
-			actual =  getActual(securitiesIndex.get(0));
-			System.out.print("\n\nGetting a test actual! ="+actual);
-			int minute = Calendar.getInstance().get(Calendar.MINUTE);
-			int second = Calendar.getInstance().get(Calendar.SECOND);
-			if(actual !=0){output.add(0,actual);break;}
-			//pause and keep looping
-			if (minute%5==0 && second <2 || minute%5==4 && second >57) {
-				Thread.sleep(10);
-			}
-			else {Thread.sleep(7000);}
-		}
-		
-		for (int i =1; i < indicators.size();i++){
-			actual = getActual(securitiesIndex.get(i));
-			output.add(i, actual);
-		}
-		if(actual==0) System.out.print("\n!!!!!!!!!!!!BACKGROUND PROCESS TIMEOUT!!!!!!!!!!!!");
-		return output;
-		*/
-	}
 	
-	@Override
-	protected void done(){
-/*
-		//JPanel contentPane = (JPanel) bar.getContentPane();
-	//get actuals order same with securities
-try{
-		actuals = get();
-		System.out.print("\n>>>>>>>>>>>>>>Get all the real-time data: "+actuals);
-	}
-	catch(Exception e){
-		System.out.print("\n==========CANNOT GET BMG ACTUALS FROM $DataProcess.DoInBackground==========\n");
-		e.printStackTrace();
-	}
-	// fill colors
-	for(int i=0;i<Bars.rectangles.size();i++){
-		System.out.print("\n++++++Repainting "+i+"th rectangle!++++");
-		//System.out.println(Bars.rectangles.get(i).toString());
-		if(actuals.get(i)!=0){
-			Bars.rectangles.get(i).setActual(actuals.get(i));
-			Bars.rectangles.get(i).setFill(true);
-			//contentPane.revalidate();
-			Bars.rectangles.get(i).repaint();	
-		}
-		
-	
-	}
-	*/	
-}
 
 
 }

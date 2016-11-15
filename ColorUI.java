@@ -213,7 +213,6 @@ public class ColorUI extends JFrame implements ActionListener {
 	}
 	
 	public void writeToDB(String index, String nickName){
-	
 		if(index.equals("")||nickName.equals("")) return;
 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\indices.csv";
 		Writer output;
@@ -253,9 +252,6 @@ public class ColorUI extends JFrame implements ActionListener {
 					//show on selectedList
 					 model.addElement(securities.get(index));
 					 selectedList.setModel(model);
-					 //System.out.println("JList Model: "+model.toString());
-					 //System.out.println("New add:"+securitiesIndex.get(index)+"and "+securities.get(index));
-					
 				 }
 				
 			}
@@ -276,7 +272,6 @@ public class ColorUI extends JFrame implements ActionListener {
 			else if (label.equals("SAVE")){
 				try {
 					saveNames(indexSelected,nameSelected);
-					//System.out.println("SAVE button: "+indexSelected+ " and "+nameSelected);
 					JOptionPane.showMessageDialog(contentPane, "Modification saved!");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
@@ -293,11 +288,7 @@ public class ColorUI extends JFrame implements ActionListener {
 				System.out.println("====================$ColorUI: Bars initialization finished!===============\n");
 				bar.setVisible(true);
 				//----------------Start BACKGROUND Process here--------------------
-				/*DataProcess data = new DataProcess(selected,bar);
-				data.execute();
-				*/
 				
-				//ArrayList<SingleDataProcess> processes = new ArrayList<SingleDataProcess>();
 				for(int i=0; i<indexSelected.size();i++){
 					RectDraw rect = bar.rectangles.get(i);
 					SingleDataProcess data = new SingleDataProcess(rect);
@@ -329,7 +320,7 @@ public class ColorUI extends JFrame implements ActionListener {
 			      }
 				
 			} catch (IOException exc) {
-				// TODO Auto-generated catch block
+				
 				exc.printStackTrace();
 				JOptionPane.showMessageDialog(contentPane, "Add new indicator failed! Please don't re-try!");
 				//TODO: Remove the line in indices.csv

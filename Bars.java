@@ -72,10 +72,9 @@ public class Bars extends JFrame {
 		}
 		for(int j=0;j<securitiesIndex.size();j++){
 			double var = DataProcess.getVar(securitiesIndex.get(j));
-			//System.out.println("!!!!!VAR original is: "+var);
-			var = Double.valueOf(String.format("%1.2f",var));
+			var = Double.valueOf(String.format("%1.2f",var)); //two decimal points
 			
-					//Construct a RectDraw ==> Actual==0 for now
+			//Construct a RectDraw ==> Actual==0 for now
 			RectDraw rect = null;
 			rect = new RectDraw(securities.get(j), 0,choices.get(securitiesIndex.get(j)),0,var);
 			double testExp = 0;
@@ -96,9 +95,6 @@ public class Bars extends JFrame {
 				indicator.setAlignmentX(CENTER_ALIGNMENT);
 				indicator.setFont(new Font("Serif", Font.BOLD, 25));
 				contentPane.add(indicator);
-				
-//				JButton test = new JButton("test");
-//				contentPane.add(test);
 				
 				System.out.println("\n>>>Initialized this rectangle:" + rect.toString());
 				//Draw Rectangle
