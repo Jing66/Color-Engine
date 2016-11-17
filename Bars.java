@@ -1,6 +1,7 @@
 package colors;
 
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 
@@ -66,15 +68,16 @@ public class Bars extends JFrame {
 		securitiesIndex = new ArrayList<String>(choices.keySet());
 		System.out.print("Securities Index: "+securitiesIndex);
 		try {
-			securities = DataProcess.getNames(securitiesIndex);
+			securities = DataProcess.getNickNames(securitiesIndex);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 		for(int j=0;j<securitiesIndex.size();j++){
 			double var = DataProcess.getVar(securitiesIndex.get(j));
-			var = Double.valueOf(String.format("%1.2f",var)); //two decimal points
+			//System.out.println("!!!!!VAR original is: "+var);
+			var = Double.valueOf(String.format("%1.2f",var));
 			
-			//Construct a RectDraw ==> Actual==0 for now
+					//Construct a RectDraw ==> Actual==0 for now
 			RectDraw rect = null;
 			rect = new RectDraw(securities.get(j), 0,choices.get(securitiesIndex.get(j)),0,var);
 			double testExp = 0;
@@ -89,12 +92,19 @@ public class Bars extends JFrame {
 			finally{
 				rect.setExp(testExp);  
 				rect.setIndex(securitiesIndex.get(j));
-				//*************Add Expectation value and VAR JLabel**************			
-				String text = securities.get(j) + "           Var= " +var;
+				//*************Add Expectation value and VAR JLabel**************	
+				//JTextField name = new JTextField(securities.get(j));
+				String text = securities.get(j)+"           Var= " +var;
 				JLabel indicator = new JLabel(text);
+				//name.setPreferredSize( new Dimension( 20, 10 ) );
+				//name.setAlignmentX(CENTER_ALIGNMENT);
+				//contentPane.add(name);
 				indicator.setAlignmentX(CENTER_ALIGNMENT);
 				indicator.setFont(new Font("Serif", Font.BOLD, 25));
 				contentPane.add(indicator);
+				
+//				JButton test = new JButton("test");
+//				contentPane.add(test);
 				
 				System.out.println("\n>>>Initialized this rectangle:" + rect.toString());
 				//Draw Rectangle

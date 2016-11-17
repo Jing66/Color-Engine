@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -186,7 +187,7 @@ public class ColorUI extends JFrame implements ActionListener {
         	  //Add indices into securitiesIndex
         	  this.indexSelected.add(tuples[0]);
         	  this.nameSelected.add(tuples[1]);
-        	  if(tuples[0].contains("DOE")|| tuples[0].contains("Unemployment")|| tuples[0].contains("Initial")) selected.put(tuples[0], 1);
+        	  if(tuples[0].contains("DOE")|| tuples[0].contains("Retail")|| tuples[0].contains("Initial")) selected.put(tuples[0], 1);
 
         	  else selected.put(tuples[0], 0);
         	  line = br.readLine();
@@ -229,10 +230,32 @@ public class ColorUI extends JFrame implements ActionListener {
 		} catch (IOException e) {
 			// Auto-generated catch block
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(contentPane, "Write to indices.csv failed! Please close the file and run again!");
+			JOptionPane.showMessageDialog(contentPane, "Write to indices.csv failed! Please make sure the file is closed and run again!");
 			System.exit(1);
 		}
 		
+	}
+	
+	private static void removeLastLine(){
+		
+		//TOCHECK:  Remove the line in indices.csv
+		String fileName = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\Indices.csv";
+		try{
+			RandomAccessFile f = new RandomAccessFile(fileName, "rw");
+			long length = f.length() - 1;
+			byte b;
+			do {                     
+				length -= 1;
+				f.seek(length);
+				 b = f.readByte();
+			} while(b != 10);
+			f.setLength(length+1);
+			f.close();
+			System.out.println("LastLine removed!");
+		}
+		catch(IOException ex){
+			ex.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -305,6 +328,16 @@ public class ColorUI extends JFrame implements ActionListener {
 			String index = newIndicator.getText();
 			String nickName = newNickName.getText(); 
 			System.out.print("Add a new index:"+index+", NickName is "+nickName);
+			
+			ArrayList<String> test = new ArrayList<String>();
+			test.add(index);
+			try{
+				ArrayList<String> realName = DataProcess.getNames(test);
+			}catch(Exception exce){
+				 JOptionPane.showMessageDialog(contentPane, "The input is not a legit Bloomberg Index! Please copy paste from Bloomberg directly! ");
+		    	  System.exit(1);
+			}
+			//valid bloomberg index name checked
 			writeToDB(index, nickName);
 			String command = "\"C:\\Program Files\\R\\R-3.3.1\\bin\\x64\\Rscript.exe\" \"C:/Users/windows7/Desktop/JingyLiu/db/getVar.r\"";
 			try {
@@ -313,30 +346,24 @@ public class ColorUI extends JFrame implements ActionListener {
 				InputStream is = process.getInputStream();
 			      InputStreamReader isr = new InputStreamReader(is);
 			      BufferedReader br = new BufferedReader(isr);
+			     
 			      String line= br.readLine();
+			      System.out.println("   >>Got from cmd:"+line);
 			      if(line.charAt(line.length()-2)=='S'){
 			    	  JOptionPane.showMessageDialog(contentPane, "Database Updated! Please restart the program! Any changes will show at the bottom!");
 			    	  System.exit(0);
 			      }
 			      else{
-			    	  JOptionPane.showMessageDialog(contentPane, "Cannot get the Var value of the new indicator! Please exam if the BMG index is legit and modify the file manually!");
+			    	  
+			    	  JOptionPane.showMessageDialog(contentPane, "Cannot get the Var value of the new indicator! Please modify indices.csv manually!");
+			    	  removeLastLine();
 			    	  System.exit(1);
 			      }
 				
-			} catch (IOException exc) {
-				
+			} catch (IOException exc) {	
 				exc.printStackTrace();
-				JOptionPane.showMessageDialog(contentPane, "Add new indicator failed! Please don't re-try!");
-				//TOCHECK:  Remove the line in indices.csv
-				RandomAccessFile f = new RandomAccessFile(fileName, "rw");
-				long length = f.length() - 1;
-				do {                     
-    				length -= 1;
-    				f.seek(length);
-    				byte b = f.readByte();
-				} while(b != 10);
-				f.setLength(length+1);
-				f.close();
+				 JOptionPane.showMessageDialog(contentPane, "Oops something unknown source went wrong! Please do a sanity check on every file! ");
+				System.exit(1);
 			}
 			
 			
