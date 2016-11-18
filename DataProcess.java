@@ -56,27 +56,27 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 
 	/************Read variable from the H4 cell********/
 	public static double getVar(String index){
-	double var=0;
+		double var=0;
 	/*++++++++++++++++++Open an csv file instead++++++++++++++++++*/
-	BufferedReader br = null; 
-	String line= " ";
-	try {
- 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\Vars.csv";
- 		br = new BufferedReader(new FileReader(fullPath));
+		BufferedReader br = null; 
+		String line= " ";
+		try {
+			String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\Vars.csv";
+			br = new BufferedReader(new FileReader(fullPath));
            //======The data is located at 4th line last cell=====
-   		line = br.readLine();
-          while(line!=null){
+			line = br.readLine();
+			while(line!=null){
         	  //System.out.print(line+" next line: \n");
-        	  String[] tuples = line.split(",");
-        	  if(tuples[0].equals(index)) {var = Double.parseDouble(tuples[2]);break;}
-        	  line = br.readLine();
-          }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
+				String[] tuples = line.split(",");
+				if(strip(tuples[0]).equals(index)) {var = Double.parseDouble(tuples[2]);break;}
+				line = br.readLine();
+			}
+        	} catch (FileNotFoundException e) {
+        		e.printStackTrace();
+        	} catch (IOException e) {
+        		e.printStackTrace();
+        	} finally {
+        		if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
@@ -307,7 +307,7 @@ public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 		return names;
 	}
 
-	private static String strip(String indicator){
+	public static String strip(String indicator){
 		char quote = '\"';
 		
 		if(indicator.charAt(0)==quote) {indicator = indicator.substring(1, indicator.length()-1);}
@@ -427,7 +427,7 @@ try{
   	           e.printStackTrace();
   	        }
 		for(int i=0; i<indicies.size();i++){
-			out.add(all.get(indicies.get(i)));
+			out.add(all.get(strip(indicies.get(i))));
 		}
 		System.out.println("+++++Get Nick Names: " + out);
 		return out;

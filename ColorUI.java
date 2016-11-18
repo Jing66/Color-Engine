@@ -19,6 +19,7 @@ import java.io.RandomAccessFile;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -37,7 +38,7 @@ public class ColorUI extends JFrame implements ActionListener {
 	private JPanel contentPane;
 
 
-	Hashtable<String,Integer> selected = new Hashtable<String,Integer>();
+	Hashtable<String,Integer> selected = new Hashtable<String,Integer>(); //BOND =0, INVERSE = 1;
 	ArrayList<String> securitiesIndex = new ArrayList<String>();	//A list of ALL securities listed on panel (not NAME)
 	ArrayList<String> securities = new ArrayList<String>();	//A list of all security NAMEs corresponding to securitiesIndex
 	public ArrayList<String> indexSelected = new ArrayList<String>(); //A list of SELECTED securities indices
@@ -120,7 +121,7 @@ public class ColorUI extends JFrame implements ActionListener {
 		del.addActionListener(this);
 		contentPane.add(del);
 		
-		//++++++++++++++++Add New Indicator++++++++++++
+		//++++++++++++++++Add New Indicator Button++++++++++++
 		newIndicator.setPreferredSize( new Dimension( 150, 30 ) );
 		contentPane.add(newIndicator);
 		newNickName.setPreferredSize( new Dimension( 150, 30 ) );
@@ -128,13 +129,14 @@ public class ColorUI extends JFrame implements ActionListener {
 		JButton addNew = new JButton("Add/Update new Index");
 		addNew.addActionListener(this);
 		contentPane.add(addNew);
+		
 		//++++++++++++++++Go Button++++++++++++
 		JButton submit = new JButton("GO");
 		submit.addActionListener(this);
 		contentPane.add(submit);		
 		
-		JLabel note = new JLabel("NOTE: Every indicator except for DOE, Unemployment, Initial Claims is: A > E => buy (color red)\n");
-		contentPane.add(note);
+//		JLabel note = new JLabel("NOTE: Every indicator except for DOE, Unemployment, Initial Claims is: A > E => buy (color red)\n");
+//		contentPane.add(note);
 		
 		
 		setContentPane(contentPane);
@@ -187,9 +189,8 @@ public class ColorUI extends JFrame implements ActionListener {
         	  //Add indices into securitiesIndex
         	  this.indexSelected.add(tuples[0]);
         	  this.nameSelected.add(tuples[1]);
-        	  if(tuples[0].contains("DOE")|| tuples[0].contains("Retail")|| tuples[0].contains("Initial")) selected.put(tuples[0], 1);
-
-        	  else selected.put(tuples[0], 0);
+        	  //the third cell is the selection of BOND/INVERSE
+        	  selected.put(tuples[0], Integer.parseInt(tuples[2]));
         	  line = br.readLine();
 	    }
 	    br.close();
@@ -200,29 +201,62 @@ public class ColorUI extends JFrame implements ActionListener {
 	}
 	
 	/*
-	 * save all the <index, names> into saved.csv
+	 * save all the <index, names, bond/inverse> into saved.csv
 	 */
-	public void saveNames(ArrayList<String> indicies,ArrayList<String> names) throws Exception{
-		//System.out.println("saveNames argument: "+indicies+ " and "+names);
+	public void saveNames() throws Exception{
+		ArrayList<String> indicies = new ArrayList<String>( selected.keySet());
+		ArrayList<String> names = DataProcess.getNickNames(indicies);
 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\saved.csv";
 		PrintWriter pw = new PrintWriter(new File(fullPath));
 		StringBuilder sb = new StringBuilder();
 		for(int i=0; i<indicies.size();i++){
 			sb.append(indicies.get(i));	sb.append(",");
-			sb.append(names.get(i));	sb.append("\r\n");
+			sb.append(names.get(i));		sb.append(",");
+			sb.append(selected.get(indicies.get(i)));
+			sb.append("\r\n");
 		}
 		 pw.write(sb.toString());
 	     pw.close();
 		System.out.println("=========================\nIn saveNames write: \n"+sb.toString()+"======================\n");
 	}
 	
-
+	//if the index already exist, just update nickName
 	private void writeToDB(String index, String nickName){
+		boolean exist = false;
 		if(index.equals("")||nickName.equals("")) return;
 		String fullPath = "C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\indices.csv";
 		Writer output;
+		//strip spaces
 		while(index.charAt(index.length()-1)==' ') index = index.substring(0,index.length()-1);
 		while(index.charAt(0)==' ') index = index.substring(1,index.length());
+		//if the index already exist, just update nickName
+		BufferedReader reader = null;
+		BufferedWriter writer = null;
+  		try {
+  			File passwords = new File(fullPath);
+  			File temp = new File("C:\\Users\\windows7\\Desktop\\JingyLiu\\db\\temp.csv");
+  			reader = new BufferedReader(new FileReader(passwords));
+  	        writer = new BufferedWriter(new FileWriter(temp));
+  	        String line=" ";
+  	        while ((line = reader.readLine()) != null) {
+  	        	String[] tuples = line.split(",");
+  	        	if (!tuples[0].equals(index)) {
+  	        		writer.write(line + "\n");
+  	        	}
+              	else {writer.write(index+","+nickName+"\r\n");exist = true;System.out.println("\nMerely Updated existed index!");}
+  	        }
+  	        reader.close();
+	        writer.close();
+	        
+  	        passwords.delete();
+  	        temp.renameTo(new File(fullPath));
+	        
+  	       
+  	        } catch (Exception e) {
+  	           e.printStackTrace();
+  	        }
+  		
+  		if (exist) return;
 		try {
 			output = new BufferedWriter(new FileWriter(fullPath, true));
 			output.append(index+","+nickName+"\r\n");
@@ -272,15 +306,21 @@ public class ColorUI extends JFrame implements ActionListener {
 				 int index = list.getSelectedIndex();
 				 if(index<0) JOptionPane.showMessageDialog(contentPane, "Please first select an indicator and then add it!");
 				 if(!selected.containsKey(securitiesIndex.get(index))){
-					 if(securitiesIndex.get(index).contains("DOE")) selected.put(securitiesIndex.get(index), 1); 
-					 else selected.put(securitiesIndex.get(index), 0);
-					 indexSelected.add(securitiesIndex.get(index));
-					 nameSelected.add(securities.get(index));
-					//show on selectedList
-					 model.addElement(securities.get(index));
-					 selectedList.setModel(model);
+					//Ask user to choose BOND/INVERSE
+					Object[] options = {"Sell", "Buy"};
+					int n = JOptionPane.showOptionDialog(contentPane,
+							   "If "+securities.get(index)+" numbers come in higher than expected, you want sell or buy?","Bond or Inverse). ",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,  options,  options[0]); //default button title
+					if(n>=0){
+						String thisIndex = DataProcess.strip(securitiesIndex.get(index));
+						selected.put(thisIndex, n); 
+						 indexSelected.add(thisIndex);
+						 nameSelected.add(securities.get(index));
+						//show on selectedList
+						 model.addElement(DataProcess.strip(securities.get(index)));
+						 selectedList.setModel(model);
+					}
+					 
 				 }
-				
 			}
 			else if(label.equals("REMOVE")){
 				//Delete elements from scroll pane;
@@ -298,7 +338,7 @@ public class ColorUI extends JFrame implements ActionListener {
 			//save to saved.csv
 			else if (label.equals("SAVE")){
 				try {
-					saveNames(indexSelected,nameSelected);
+					saveNames();
 					JOptionPane.showMessageDialog(contentPane, "Modification saved!");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
@@ -311,16 +351,17 @@ public class ColorUI extends JFrame implements ActionListener {
 			else if(label.equals( "GO")){
 				System.out.println("\n====================$ColorUI: Initializing bars===============");
 				Bars bar = null;
+				System.out.println("Selected in $ColoUI:" + selected);
 				bar = new Bars(selected);
 				System.out.println("====================$ColorUI: Bars initialization finished!===============\n");
 				bar.setVisible(true);
 				//----------------Start BACKGROUND Process here--------------------
-				
 				for(int i=0; i<indexSelected.size();i++){
 					RectDraw rect = bar.rectangles.get(i);
 					SingleDataProcess data = new SingleDataProcess(rect);
 					data.execute();
 				}
+				setVisible(false);
 			}
 		
 		//++++++++++++++++++++++++++update database++++++++++++++++++++++++++++++++
@@ -328,7 +369,7 @@ public class ColorUI extends JFrame implements ActionListener {
 			String index = newIndicator.getText();
 			String nickName = newNickName.getText(); 
 			System.out.print("Add a new index:"+index+", NickName is "+nickName);
-			
+			//check Index is valid
 			ArrayList<String> test = new ArrayList<String>();
 			test.add(index);
 			try{

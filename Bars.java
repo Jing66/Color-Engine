@@ -66,7 +66,7 @@ public class Bars extends JFrame {
 		
 		//++++++++++++++++++Loop to Draw Rectangles, Given Indicator security name++++++++++++++
 		securitiesIndex = new ArrayList<String>(choices.keySet());
-		System.out.print("Securities Index: "+securitiesIndex);
+		System.out.print("$Bars: Securities Index: "+securitiesIndex);
 		try {
 			securities = DataProcess.getNickNames(securitiesIndex);
 		} catch (Exception e1) {
@@ -74,7 +74,7 @@ public class Bars extends JFrame {
 		}
 		for(int j=0;j<securitiesIndex.size();j++){
 			double var = DataProcess.getVar(securitiesIndex.get(j));
-			//System.out.println("!!!!!VAR original is: "+var);
+			
 			var = Double.valueOf(String.format("%1.2f",var));
 			
 					//Construct a RectDraw ==> Actual==0 for now
@@ -93,8 +93,10 @@ public class Bars extends JFrame {
 				rect.setExp(testExp);  
 				rect.setIndex(securitiesIndex.get(j));
 				//*************Add Expectation value and VAR JLabel**************	
-				//JTextField name = new JTextField(securities.get(j));
-				String text = securities.get(j)+"           Var= " +var;
+				String bondInverse;
+				if(choices.get(securitiesIndex.get(j))==0) bondInverse = "    (Bond)";
+				else bondInverse = "   (Inverse)";
+				String text = securities.get(j)+bondInverse;
 				JLabel indicator = new JLabel(text);
 				//name.setPreferredSize( new Dimension( 20, 10 ) );
 				//name.setAlignmentX(CENTER_ALIGNMENT);

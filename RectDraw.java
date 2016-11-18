@@ -33,6 +33,7 @@ public class RectDraw extends JPanel implements ActionListener{
 	private final int SINGLE_CELL_LEN = FULL_RECT_LEN/10;
 	private double exp =0;
 	private JTextField expText;
+	private JTextField varText;
 	private boolean fill = false;
 	private double realData=0;
 	private int bond; 
@@ -47,7 +48,13 @@ public class RectDraw extends JPanel implements ActionListener{
 	public RectDraw(String name, double exp,int bond, double actual, double var){
 		setPreferredSize(new Dimension(600,80));
 		setLayout(new FlowLayout());
-		
+		/*GridBagLayout layOut = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 1.0;
+		c.gridx = 3;
+		*/
+		//setLayout(new BorderLayout());
 		this.name = name;
 		this.exp = exp;
 		expText = new JTextField(Double.toString(exp));
@@ -57,30 +64,44 @@ public class RectDraw extends JPanel implements ActionListener{
 		this.var = var;
 		
 		//Fill the blank
-		this.add(new JLabel("                                                                                                                                                                                                                                                                  "));
+		this.add(new JLabel("                                                                                                                                                                                                                                                                                  "));
+		
 		//Editable expectation value
+
 		expText = new JTextField(Double.toString(exp));
 		expText.setAlignmentX(Component.CENTER_ALIGNMENT); 
 		Font bigFont = expText.getFont().deriveFont(Font.PLAIN, 30f);
 		expText.setFont(bigFont);
 		expText.addActionListener(this);
 		this.add(expText);
+		
+		//Editable var value
+		JLabel space = new JLabel("                ");
+		this.add(space);
+		JLabel varLabel = new JLabel("<html><span style='font-size:15px'>"+" var="+"</span></html> ");
+		this.add(varLabel);
+		varText = new JTextField(Double.toString(var));
+		Font varFont = expText.getFont().deriveFont(Font.PLAIN, 15f);
+		varText.setFont(varFont);
+		varText.addActionListener(this);
+		this.add(varText);
 	
 		//Fill the blank: make arrows at the end
-		this.add(new JLabel("                                                                                                                                                                                                                                                           "));
-		
+		this.add(new JLabel("                                                                                                                                                                                                             "));
+		//adjustable width of rectangles
 		BasicArrowButton incr = new BasicArrowButton(BasicArrowButton.NORTH);   //getDirection() returns 1(int)
 		BasicArrowButton decr = new BasicArrowButton(BasicArrowButton.SOUTH);	//getDirection() returns 5(int)
-		
 		incr.addActionListener(this);
 		decr.addActionListener(this);
 		this.add(incr);
 		this.add(decr);
 	
+		
 	}
 	
-	//Draw Rectangle
+	//Draw Rectangle: Each Rectangle length 125, startX=100, Width=30, startY = 5; middle rect length = 75;
 	public void paintComponent(Graphics g){
+		//System.out.println("PAINTING");
 		super.paintComponent(g);  
 		Graphics2D g2d = (Graphics2D)g;
 		g2d.setStroke(new BasicStroke(3));
@@ -110,7 +131,7 @@ public class RectDraw extends JPanel implements ActionListener{
 				
 				
 				//*********************Fill Colors*************************
-				//If (BOND && mVar >0)||(Inverse && mVar<0) : red on right
+				//If (BOND && A>E)||(Inverse && A<E ) : a sell, red to the right right
 				if(bond == 0&& mVar > 0 || bond ==1 && mVar <0){
 					//System.out.print("\nCASE: A > E: blue box to the right \n");
 					mVar = Math.abs(mVar);
@@ -124,6 +145,7 @@ public class RectDraw extends JPanel implements ActionListener{
 					}
 				}
 				else{
+					//System.out.print("\nCASE: A < E: red box to the right \n");
 					mVar = Math.abs(mVar);
 					int startFill=middleX-MIDDLE_RECT_LEN/2-SINGLE_CELL_LEN;
 					while(countSmallBox < numSmallBox){
@@ -160,6 +182,7 @@ public class RectDraw extends JPanel implements ActionListener{
 		if(source instanceof JButton){
 			
 			BasicArrowButton o = (BasicArrowButton) source;
+			//System.out.println("!!!! get direction:"+o.getDirection());
 			if(o.getDirection()==1) {
 				//If increase the width
 				setHeight(recHeight+UNIT_WIDTH);
@@ -174,8 +197,9 @@ public class RectDraw extends JPanel implements ActionListener{
 		else{
 		//if the action is from textfield
 			try{
-				exp = Double.parseDouble(expText.getText());
-				System.out.print("\n\n+++++++++++++++++++Exp has changed to: "+exp+"\n");
+				setExp(Double.parseDouble(expText.getText()));
+				setVar(Double.parseDouble(varText.getText()));
+				
 			}catch(Exception e){
 				System.out.print("==========Expectation input should be double========");
 				e.printStackTrace();
@@ -217,5 +241,11 @@ public class RectDraw extends JPanel implements ActionListener{
 	@Override
 	public String toString(){
 		return "\nRectangle name: " + name + ", Exp=" + exp + ", Var= " + var + ", bond= "+bond+" index= "+index;
+	}
+	
+	private void setVar(double input){
+		this.var = input;
+		varText.setText(Double.toString(input));
+		System.out.print("\n\n+++++++++++++++++++Var has changed to: "+var+"\n");
 	}
 }
