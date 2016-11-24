@@ -1,12 +1,18 @@
 package colors;
 
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
@@ -32,8 +38,8 @@ public class Bars extends JFrame {
 			public void run() {
 				try {
 					Hashtable<String,Integer> test = new Hashtable<String,Integer>();
-					test.put("a",0);
-					test.put("aaaaaaaaa",1);
+					test.put("CANLNETJ Index",0);
+					test.put("DOEASCRD Index",0);
 					
 					Bars frame = new Bars(test);
 					frame.setVisible(true);
@@ -54,7 +60,7 @@ public class Bars extends JFrame {
 	 * @param  choices  Hashtable that contains all the information by users' choice
 	 */
 	public Bars(Hashtable<String,Integer> choices){
-		//++++++++++++++++++Layout++++++++++++++++++++++++++++++++
+		//++++++++++++++++++Whole Panel Layout++++++++++++++++++++++++++++++++
 		setTitle("Bars Ready");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(30, 100, 1800, 1000);
@@ -63,6 +69,7 @@ public class Bars extends JFrame {
 		setContentPane(contentPane);
 		BoxLayout boxlayout = new BoxLayout(contentPane, BoxLayout.Y_AXIS);  //Y_AXIS: vertical
 		contentPane.setLayout(boxlayout);
+		
 		
 		//++++++++++++++++++Loop to Draw Rectangles, Given Indicator security name++++++++++++++
 		securitiesIndex = new ArrayList<String>(choices.keySet());
@@ -73,13 +80,17 @@ public class Bars extends JFrame {
 			e1.printStackTrace();
 		}
 		for(int j=0;j<securitiesIndex.size();j++){
+			//++++++++++++++ Group Labels and set layout+++++++++++++
+			JPanel labelPane = new JPanel();
+			labelPane.setLayout(new BoxLayout(labelPane, BoxLayout.X_AXIS));
+			
+			//++++++++++++ Construct Rectangle+++++++++++++++
 			double var = DataProcess.getVar(securitiesIndex.get(j));
-			
 			var = Double.valueOf(String.format("%1.2f",var));
-			
-					//Construct a RectDraw ==> Actual==0 for now
+			//Construct a RectDraw ==> Actual==0 for now
 			RectDraw rect = null;
 			rect = new RectDraw(securities.get(j), 0,choices.get(securitiesIndex.get(j)),0,var);
+			
 			double testExp = 0;
 			try {
 				 testExp = DataProcess.getExp(securitiesIndex.get(j)); 
@@ -94,20 +105,23 @@ public class Bars extends JFrame {
 				rect.setIndex(securitiesIndex.get(j));
 				//*************Add Expectation value and VAR JLabel**************	
 				String bondInverse;
-				if(choices.get(securitiesIndex.get(j))==0) bondInverse = "    (Bond)";
-				else bondInverse = "   (Inverse)";
-				String text = securities.get(j)+bondInverse;
+				
+				//++++++++++++++++  Add Labels
+				String text = securities.get(j);
 				JLabel indicator = new JLabel(text);
-				//name.setPreferredSize( new Dimension( 20, 10 ) );
-				//name.setAlignmentX(CENTER_ALIGNMENT);
-				//contentPane.add(name);
 				indicator.setAlignmentX(CENTER_ALIGNMENT);
 				indicator.setFont(new Font("Serif", Font.BOLD, 25));
-				contentPane.add(indicator);
+				labelPane.add(indicator);
 				
-//				JButton test = new JButton("test");
-//				contentPane.add(test);
-				
+				if(choices.get(securitiesIndex.get(j))==0) {
+					bondInverse = "           (high = sell)";
+				}
+				else bondInverse = "             (high = buy)";
+				JLabel bondOrInverse = new JLabel(bondInverse);
+				bondOrInverse.setFont(new Font("Serif", Font.BOLD, 18));
+				labelPane.add(bondOrInverse);
+			    contentPane.add(labelPane);
+
 				System.out.println("\n>>>Initialized this rectangle:" + rect.toString());
 				//Draw Rectangle
 				contentPane.add(rect);

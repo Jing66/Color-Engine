@@ -29,11 +29,13 @@ import com.bloomberglp.blpapi.SubscriptionList;
 /**
  * process data: get Var from excel, get expectation from Bloomberg, get real-time data from 
  * 	Bloomberg
- * @author liujingyun
+ * @author liujingyun 
  *
  */
+
 public class DataProcess extends SwingWorker<ArrayList<Double>,Void>{
 	private JFrame bar;
+	
 	private Hashtable<String,Integer> indicators = new Hashtable<String,Integer>();
 	ArrayList<Double> actuals = new ArrayList<Double>();
 	public ArrayList<String> securities = new ArrayList<String>();

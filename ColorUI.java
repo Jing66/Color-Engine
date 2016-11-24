@@ -74,7 +74,7 @@ public class ColorUI extends JFrame implements ActionListener {
 		//++++++++++++Set Panel+++++++++++++++++++		
 		setTitle("Colors Version 2");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 50, 970, 950);
+		setBounds(100, 50, 1200, 1000);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(15, 15, 15, 45));	
 		
@@ -85,9 +85,9 @@ public class ColorUI extends JFrame implements ActionListener {
 		//++++++++++++++Generate List for ALL available indicies: nicknames ++++++++++++++
 		String[] toShow = securities.toArray(new String[securities.size()]);
 		list = new JList<String>(toShow); //data has type Object[]
-		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		list.setLayoutOrientation(JList.VERTICAL_WRAP);
-		list.setVisibleRowCount(30);
+		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		list.setVisibleRowCount(-1);
 		JScrollPane listScroller = new JScrollPane(list);
 		listScroller.setPreferredSize(new Dimension(500, 800));
 		contentPane.add(listScroller);
@@ -99,9 +99,9 @@ public class ColorUI extends JFrame implements ActionListener {
 		}
 		//++++++++++++++Generate List for SELECTED available indicies++++++++++++++
 		selectedList = new JList<String>(nameSelected.toArray(new String[selected.size()]));
-		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-		list.setVisibleRowCount(-1);
+		selectedList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		selectedList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		selectedList.setVisibleRowCount(-1);
 		//list.setFixedCellHeight(20);
 		JScrollPane selectedListScroller = new JScrollPane(selectedList);
 		selectedListScroller.setPreferredSize(new Dimension(300, 500));
@@ -368,22 +368,25 @@ public class ColorUI extends JFrame implements ActionListener {
 		else{
 			String index = newIndicator.getText();
 			String nickName = newNickName.getText(); 
-			System.out.print("Add a new index:"+index+", NickName is "+nickName);
+			System.out.print("Add a new index: "+index+", NickName is "+nickName);
 			//check Index is valid
 			ArrayList<String> test = new ArrayList<String>();
 			test.add(index);
-			try{
+			if(!index.equals("")){
+				try{
 				ArrayList<String> realName = DataProcess.getNames(test);
-			}catch(Exception exce){
-				 JOptionPane.showMessageDialog(contentPane, "The input is not a legit Bloomberg Index! Please copy paste from Bloomberg directly! ");
+				}catch(Exception exce){
+					JOptionPane.showMessageDialog(contentPane, "The input is not a legit Bloomberg Index! Please copy paste from Bloomberg directly! ");
 		    	  System.exit(1);
+				}
 			}
+			
 			//valid bloomberg index name checked
 			writeToDB(index, nickName);
 			String command = "\"C:\\Program Files\\R\\R-3.3.1\\bin\\x64\\Rscript.exe\" \"C:/Users/windows7/Desktop/JingyLiu/db/getVar.r\"";
 			try {
 				Process process = Runtime.getRuntime().exec(command);
-				 JOptionPane.showMessageDialog(contentPane, "Updating database......Please wait and DON\'T terminate program!");
+				 JOptionPane.showMessageDialog(contentPane, "Updating database......Please wait and DON\'T terminate program until hinted!");
 				InputStream is = process.getInputStream();
 			      InputStreamReader isr = new InputStreamReader(is);
 			      BufferedReader br = new BufferedReader(isr);
